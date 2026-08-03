@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My DMV Cleaning Services LLC</title>
+
+<link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+<!-- ================= LOADER ================= -->
+<div id="loader" class="loader hidden"></div>
+<div id="toast" class="toast"></div>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+
+  <div class="logo">My DMV Cleaning Services LLC</div>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="#services">Services</a>
+    <a href="#pricing">Pricing</a>
+    <a href="documents.html">
+📄 Documents
+</a>
+    <a href="#contact">Contact</a>
+    <a href="booking.html">Booking</a>
+  </nav>
+
+  <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+</header>
+
+<a id="top"></a>
+
+<!-- ================= HERO ================= -->
+<section class="hero section-box">
+
+  <video autoplay muted loop playsinline class="hero-video">
+    <source src="videos/6197066-uhd_3840_2160_25fps.mp4" type="video/mp4">
+  </video>
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+
+    <h1>Professional Cleaning You Can Trust</h1>
+    <p>Residential & commercial cleaning across DC, Maryland & Virginia</p>
+
+    <div class="hero-buttons">
+      <a href="booking.html" class="btn primary">🧼 Book Now</a>
+      <a href="tel:7039670674" class="btn call-btn">📞 Call Now</a>
+    </div>
+
+    <div class="hero-badges">
+      <span>⭐ 5.0 Rated</span>
+      <span>⚡ Same Day Service</span>
+      <span>🛡️ Fully Insured</span>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section class="section-box" id="services">
+  <h2>Our Services</h2>
+
+  <div class="service-cards">
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952">
+      <div class="card-overlay">
+        <h3>House Cleaning</h3>
+        <p>Starting at $120</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1585421514738-01798e348b17">
+      <div class="card-overlay">
+        <h3>Deep Cleaning</h3>
+        <p>Starting at $200</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c">
+      <div class="card-overlay">
+        <h3>Office Cleaning</h3>
+        <p>Starting at $180</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511">
+      <div class="card-overlay">
+        <h3>Move In / Out</h3>
+        <p>Starting at $250</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="section-box" id="pricing">
+
+  <h2>Simple Pricing</h2>
+
+  <div class="pricing-grid">
+
+    <div class="price-card">
+      <h3>House Cleaning</h3>
+      <h2>$120+</h2>
+    </div>
+
+    <div class="price-card">
+      <h3>Deep Cleaning</h3>
+      <h2>$200+</h2>
+    </div>
+
+    <div class="price-card featured">
+      <h3>Move In / Out</h3>
+      <h2>$250+</h2>
+    </div>
+
+    <div class="price-card">
+      <h3>Office Cleaning</h3>
+      <h2>$180+</h2>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact" class="section">
+  <h2>Contact Us</h2>
+
+  <div class="contact-box">
+
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+
+    <textarea id="message" placeholder="Your Message" rows="5" required></textarea>
+
+    <label>
+      <input type="checkbox" id="agree">
+      I agree to the Terms, Privacy Policy, and Client Contract
+    </label>
+
+    <button onclick="sendContact()" class="btn">
+      Send Message
+    </button>
+
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+
+  <div class="footer-container">
+
+    <div>
+      <h3>Services</h3>
+      <a href="#">Deep Cleaning</a>
+      <a href="#">House Cleaning</a>
+      <a href="#">Office Cleaning</a>
+      <a href="#">Move In / Out</a>
+    </div>
+
+    <div>
+      <h3>Contact</h3>
+      <p>📍 DMV Area (DC, MD, VA)</p>
+      <p>📞 <a href="tel:7039670674">703-967-0674</a></p>
+      <p>✉️ <a href="mailto:mydmvcleaningservice@gmail.com">Email Us</a></p>
+    </div>
+
+    <div>
+      <h3>Follow Us</h3>
+      <div class="footer-social">
+        <a href="#">📘</a>
+        <a href="#">📸</a>
+        <a href="#">🎵</a>
+        <a href="#">💬</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 My DMV Cleaning Services LLC. All rights reserved.
+  </div>
+
+</footer>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+function toggleMenu() {
+  document.getElementById("navLinks").classList.toggle("active");
+}
+
+document.querySelectorAll("#navLinks a").forEach(link => {
+  link.addEventListener("click", () => {
+    document.getElementById("navLinks").classList.remove("active");
+  });
+});
+
+document.addEventListener("click", function(e) {
+  const nav = document.getElementById("navLinks");
+  const burger = document.querySelector(".hamburger");
+
+  if (!nav.contains(e.target) && !burger.contains(e.target)) {
+    nav.classList.remove("active");
+  }
+});
+
+async function sendContact() {
+  try {
+    if (!document.getElementById("agree").checked) {
+      alert("You must agree to the legal terms first.");
+      return;
+    }
+
+    const data = {
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      phone: document.getElementById("phone").value,
+      message: document.getElementById("message").value
+    };
+
+    const res = await fetch("/send-contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      alert("Message sent successfully!");
+    } else {
+      alert("Failed to send message");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server not running or request failed");
+  }
+}
+</script>
+
+</body>
+</html>

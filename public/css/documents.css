@@ -1,0 +1,159 @@
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: #fff;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+
+/* ===== NAVBAR ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #020617;
+  border-bottom: 1px solid #1e293b;
+}
+
+.logo {
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links a {
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links .active {
+  background: #22c55e;
+}
+
+.hamburger {
+  display: none;
+  cursor: pointer;
+}
+
+
+/* ===== PAGE ===== */
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 40px;
+}
+
+
+/* ===== CARDS ===== */
+.card {
+  background: #020617;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+}
+
+.card h2 {
+  margin-bottom: 20px;
+}
+
+
+/* ===== GRID LINKS ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.grid a {
+  display: block;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+  text-align: center;
+}
+
+.grid a:hover {
+  background: #22c55e;
+  color: black;
+  transform: translateY(-3px);
+}
+
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #020617;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #1e293b;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.footer a {
+  color: #94a3b8;
+}
+
+.footer a:hover {
+  color: #22c55e;
+}
+
+.copy {
+  font-size: 14px;
+  color: #64748b;
+}
+
+
+/* ===== MOBILE ===== */
+@media(max-width: 768px){
+
+.nav-links {
+  display: none;
+  flex-direction: column;
+  background: #020617;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 200px;
+  padding: 20px;
+}
+
+.nav-links.active {
+  display: flex;
+}
+
+.hamburger {
+  display: block;
+}
+
+}

@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard | My DMV Cleaning Services</title>
+
+
+<link rel="stylesheet" href="../css/dashboard.css">
+
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+
+<script>
+
+if(!localStorage.getItem("adminToken")){
+
+window.location.href="login.html";
+
+}
+
+</script>
+
+
+</head>
+
+
+<body>
+
+
+
+<!-- ================= SIDEBAR ================= -->
+
+
+<div class="sidebar">
+
+
+<h2>
+🧼 Admin Panel
+</h2>
+
+
+
+<a href="dashboard.html">
+📊 Dashboard
+</a>
+
+
+
+<a href="#documents-section">
+📄 Documents
+</a>
+
+
+
+<a href="../booking.html">
+📅 Booking
+</a>
+
+
+
+<a href="../index.html">
+🏠 Home
+</a>
+
+
+
+<hr>
+
+
+
+<a href="#" onclick="logout()">
+🚪 Logout
+</a>
+
+
+
+</div>
+
+
+
+
+
+<!-- ================= MAIN ================= -->
+
+
+<div class="main">
+
+
+
+<h1>
+Booking Dashboard
+</h1>
+
+
+
+
+
+<!-- ================= CARDS ================= -->
+
+
+<div class="cards">
+
+
+<div class="card">
+
+<h3>
+Total
+</h3>
+
+<p id="total">
+0
+</p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h3>
+Paid
+</h3>
+
+<p id="paid">
+0
+</p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h3>
+Pending
+</h3>
+
+<p id="pending">
+0
+</p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h3>
+Cancelled
+</h3>
+
+<p id="cancelled">
+0
+</p>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- ================= BOOKINGS ================= -->
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Service</th>
+<th>Date</th>
+<th>Time</th>
+<th>Total</th>
+<th>Deposit</th>
+<th>Remaining</th>
+<th>Status</th>
+<th>Contract</th>
+<th>Invoice</th>
+<th>Actions</th>
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody id="table-body"></tbody>
+
+
+
+</table>
+
+
+
+
+
+
+
+<!-- ================= CONTRACTS ================= -->
+
+
+<section id="documents-section" class="documents-panel">
+
+
+
+<h1>
+📄 Signed Contracts
+</h1>
+
+
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Contract</th>
+<th>Date</th>
+<th>Signature</th>
+<th>PDF</th>
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody id="contracts-body"></tbody>
+
+
+
+</table>
+
+
+
+</section>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<script>
+
+
+const API =
+"http://localhost:3000";
+
+
+
+
+
+// ================= LOGOUT =================
+
+
+function logout(){
+
+
+localStorage.removeItem(
+"adminToken"
+);
+
+
+window.location.href="login.html";
+
+
+}
+
+
+
+
+
+
+
+
+// ================= SOCKET =================
+
+
+const socket =
+io(API);
+
+
+
+socket.on(
+"booking-updated",
+()=>{
+
+loadBookings();
+
+loadContracts();
+
+}
+
+);
+
+
+
+
+
+
+
+
+
+
+// ================= STATUS =================
+
+
+
+function statusBadge(status){
+
+
+if(status==="deposit-paid"){
+
+return `
+<span class="badge paid">
+🟢 Paid
+</span>
+`;
+
+}
+
+
+
+if(status==="pending"){
+
+return `
+<span class="badge pending">
+🟠 Pending
+</span>
+`;
+
+}
+
+
+
+if(status==="cancelled"){
+
+return `
+<span class="badge cancelled">
+🔴 Cancelled
+</span>
+`;
+
+}
+
+
+
+return status;
+
+
+}
+
+
+
+
+
+
+
+
+
+// ================= LOAD BOOKINGS =================
+
+
+
+async function loadBookings(){
+
+
+try{
+
+
+const token =
+localStorage.getItem(
+"adminToken"
+);
+
+
+
+
+const res =
+await fetch(
+
+API+"/api/bookings",
+
+{
+
+headers:{
+
+Authorization:
+"Bearer "+token
+
+}
+
+}
+
+);
+
+
+
+if(!res.ok){
+
+logout();
+
+return;
+
+}
+
+
+
+
+const data =
+await res.json();
+
+
+
+
+
+document.getElementById("total").innerText =
+data.length;
+
+
+
+document.getElementById("paid").innerText =
+data.filter(
+b=>b.status==="deposit-paid"
+).length;
+
+
+
+document.getElementById("pending").innerText =
+data.filter(
+b=>b.status==="pending"
+).length;
+
+
+
+document.getElementById("cancelled").innerText =
+data.filter(
+b=>b.status==="cancelled"
+).length;
+
+
+
+
+
+
+const table =
+document.getElementById(
+"table-body"
+);
+
+
+
+table.innerHTML="";
+
+
+
+
+
+data.forEach(b=>{
+
+
+table.innerHTML += `
+
+
+<tr>
+
+
+<td>${b.name || ""}</td>
+
+
+<td>${b.email || ""}</td>
+
+
+<td>${b.phone || ""}</td>
+
+
+<td>${b.service || ""}</td>
+
+
+<td>${b.date || ""}</td>
+
+
+<td>${b.timeSlot || ""}</td>
+
+
+<td>$${b.price || 0}</td>
+
+
+<td>$${b.deposit || 0}</td>
+
+
+<td>$${b.remaining || 0}</td>
+
+
+
+<td>
+
+${statusBadge(b.status)}
+
+</td>
+
+
+
+<td>
+
+${
+b.contractSigned
+
+?
+
+"✅ Signed"
+
+:
+
+"❌ No"
+
+}
+
+</td>
+
+
+
+
+
+<td>
+
+
+${
+b.invoice
+
+?
+
+`
+
+<a href="${b.invoice}" target="_blank">
+
+📄 Invoice
+
+</a>
+
+`
+
+:
+
+"No invoice"
+
+}
+
+
+</td>
+
+
+
+
+
+<td>
+
+
+<button onclick="approve('${b._id}')">
+
+✅ Paid
+
+</button>
+
+
+
+<button onclick="pending('${b._id}')">
+
+⏳ Pending
+
+</button>
+
+
+
+
+<button onclick="cancelBooking('${b._id}')">
+
+❌ Cancel
+
+</button>
+
+
+
+
+<button onclick="deleteBooking('${b._id}')">
+
+🗑 Delete
+
+</button>
+
+
+
+</td>
+
+
+
+</tr>
+
+
+`;
+
+
+
+});
+
+
+
+}
+
+catch(err){
+
+console.log(
+err
+);
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+// ================= UPDATE STATUS =================
+
+
+
+async function updateStatus(url,id){
+
+
+await fetch(
+
+API+url+id,
+
+{
+
+method:"PUT",
+
+headers:{
+
+Authorization:
+"Bearer "+
+localStorage.getItem(
+"adminToken"
+)
+
+}
+
+}
+
+);
+
+
+
+loadBookings();
+
+
+}
+
+
+
+function approve(id){
+
+updateStatus(
+"/admin/approve/",
+id
+);
+
+}
+
+
+
+function pending(id){
+
+updateStatus(
+"/admin/pending/",
+id
+);
+
+}
+
+
+
+function cancelBooking(id){
+
+updateStatus(
+"/admin/cancel/",
+id
+);
+
+}
+
+
+
+
+
+
+
+
+// ================= DELETE =================
+
+
+
+async function deleteBooking(id){
+
+
+if(
+!confirm(
+"Delete booking?"
+)
+)
+
+return;
+
+
+
+await fetch(
+
+API+"/admin/delete/"+id,
+
+{
+
+method:"DELETE",
+
+headers:{
+
+Authorization:
+"Bearer "+
+localStorage.getItem(
+"adminToken"
+)
+
+}
+
+}
+
+);
+
+
+
+loadBookings();
+
+
+}
+
+
+
+
+
+
+
+
+
+// ================= LOAD CONTRACTS =================
+
+
+
+async function loadContracts(){
+
+
+try{
+
+
+const token =
+localStorage.getItem(
+"adminToken"
+);
+
+
+
+const res =
+await fetch(
+
+API+"/api/admin/contracts",
+
+{
+
+headers:{
+
+Authorization:
+"Bearer "+token
+
+}
+
+}
+
+);
+
+
+
+const data =
+await res.json();
+
+
+
+
+const table =
+document.getElementById(
+"contracts-body"
+);
+
+
+
+table.innerHTML="";
+
+
+
+
+data.forEach(c=>{
+
+
+table.innerHTML += `
+
+
+<tr>
+
+
+<td>
+${c.name || ""}
+</td>
+
+
+<td>
+${c.email || ""}
+</td>
+
+
+<td>
+${c.phone || ""}
+</td>
+
+
+<td>
+${c.contractType || ""}
+</td>
+
+
+<td>
+${new Date(c.createdAt).toLocaleString()}
+</td>
+
+
+<td>
+
+<a href="${c.signature}" target="_blank">
+
+✍️ View
+
+</a>
+
+</td>
+
+
+
+<td>
+
+<a href="${c.pdfUrl}" target="_blank">
+
+📄 PDF
+
+</a>
+
+</td>
+
+
+
+</tr>
+
+
+`;
+
+
+
+});
+
+
+
+}
+
+catch(err){
+
+console.log(
+"Contract Error",
+err
+);
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+loadBookings();
+
+loadContracts();
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

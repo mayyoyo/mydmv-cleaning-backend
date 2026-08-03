@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Client Contract | My DMV Cleaning Services</title>
+
+<link rel="stylesheet" href="../css/legal.css">
+
+<script defer src="../js/legal.js"></script>
+
+</head>
+
+
+<body>
+
+
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="legal-nav">
+
+<div class="logo">
+🧼 My DMV Cleaning Services
+</div>
+
+
+<nav>
+
+<a href="../index.html">
+🏠 Home
+</a>
+
+
+<a href="../booking.html">
+📅 Booking
+</a>
+
+
+<a href="../documents.html">
+📄 Documents
+</a>
+
+
+</nav>
+
+</header>
+
+
+
+
+
+<!-- ================= CONTRACT ================= -->
+
+
+<div class="container">
+
+
+<h1 class="fade">
+Client Contract
+</h1>
+
+
+<p class="fade">
+Enterprise Service Agreement
+</p>
+
+
+
+
+<h2 class="fade">
+1. Services
+</h2>
+
+<p class="fade">
+We provide residential and commercial cleaning services.
+</p>
+
+
+
+
+<h2 class="fade">
+2. Payment Terms
+</h2>
+
+<p class="fade">
+Payments are required before or after service.
+</p>
+
+
+
+
+<h2 class="fade">
+3. Cancellation Policy
+</h2>
+
+<p class="fade">
+24-hour notice required.
+</p>
+
+
+
+
+<h2 class="fade">
+4. Liability
+</h2>
+
+<p class="fade">
+Company is not responsible for pre-existing damage.
+</p>
+
+
+
+
+
+<!-- SIGN BUTTON -->
+
+<button 
+class="legal-btn"
+onclick="openSign()">
+
+✍️ Sign Contract
+
+</button>
+
+
+
+
+
+
+<!-- SIGN FORM -->
+
+
+<div id="signBox" class="sign-box">
+
+
+
+<input 
+class="input"
+id="name"
+placeholder="Full Name">
+
+
+
+<input 
+class="input"
+id="email"
+placeholder="Email">
+
+
+
+<input 
+class="input"
+id="phone"
+placeholder="Phone">
+
+
+
+<input 
+class="input"
+id="typedName"
+placeholder="Type your full name">
+
+
+
+
+
+
+<canvas 
+id="pad"
+width="400"
+height="150">
+</canvas>
+
+
+
+
+<button 
+class="legal-btn"
+onclick="submitContract()">
+
+Submit & Sign
+
+</button>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- ================= FOOTER ================= -->
+
+
+<footer class="legal-footer">
+
+
+<a href="../legal/privacy.html">
+🔒 Privacy
+</a>
+
+
+<a href="../legal/terms.html">
+📜 Terms
+</a>
+
+
+<a href="../legal/refund.html">
+💰 Refund
+</a>
+
+
+<a href="client-contract.html">
+📄 Client Contract
+</a>
+
+
+<a href="contractor-agreement.html">
+👷 Contractor Agreement
+</a>
+
+
+<a href="../documents.html">
+📄 Documents
+</a>
+
+
+
+</footer>
+
+
+
+
+
+
+
+
+<script>
+
+
+function openSign(){
+
+document
+.getElementById("signBox")
+.style.display="block";
+
+}
+
+
+
+
+
+
+async function submitContract(){
+
+
+const data = {
+
+
+name:
+document.getElementById("name").value,
+
+
+email:
+document.getElementById("email").value,
+
+
+phone:
+document.getElementById("phone").value,
+
+
+typedName:
+document.getElementById("typedName").value,
+
+
+contractType:
+"Client Contract",
+
+
+signature:
+"base64-image-placeholder"
+
+
+};
+
+
+
+
+try{
+
+
+const res =
+await fetch(
+"/api/sign-contract",
+{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+
+},
+
+
+body:
+JSON.stringify(data)
+
+
+});
+
+
+
+
+const result =
+await res.json();
+
+
+
+
+if(result.success){
+
+
+alert(
+"Contract Signed Successfully!"
+);
+
+
+window.location.href =
+result.contract.pdfUrl;
+
+
+}
+
+else{
+
+
+alert(
+result.error || "Signing failed"
+);
+
+
+}
+
+
+
+}
+
+catch(err){
+
+
+console.log(err);
+
+
+alert(
+"Server connection error"
+);
+
+
+}
+
+
+
+}
+
+
+
+</script>
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Service Agreement | My DMV Cleaning Services LLC</title>
+
+<link rel="stylesheet" href="../css/legal.css">
+
+<script defer src="../js/legal.js"></script>
+
+</head>
+
+
+<body>
+
+
+
+
+
+<!-- ================= NAVBAR ================= -->
+
+
+<header class="legal-nav">
+
+
+<div class="logo">
+🧼 My DMV Cleaning Services
+</div>
+
+
+
+
+<nav>
+
+
+<a href="../index.html">
+🏠 Home
+</a>
+
+
+
+<a href="../booking.html">
+📅 Booking
+</a>
+
+
+
+<a href="../documents.html">
+📄 Documents
+</a>
+
+
+
+</nav>
+
+
+</header>
+
+
+
+
+
+
+
+
+<!-- ================= CONTENT ================= -->
+
+
+<div class="container">
+
+
+
+<h1 class="fade">
+Service Agreement
+</h1>
+
+
+
+
+<p class="effective fade">
+Effective Date: January 1, 2026
+</p>
+
+
+
+
+
+
+
+
+<h2 class="fade">
+Scope of Services
+</h2>
+
+
+<p class="fade">
+
+Cleaning services will be performed based on the selected package and customer request.
+
+</p>
+
+
+
+
+
+
+
+<h2 class="fade">
+Pricing Terms
+</h2>
+
+
+<p class="fade">
+
+All prices are confirmed before service begins. Additional services may include extra charges.
+
+</p>
+
+
+
+
+
+
+
+<h2 class="fade">
+Scheduling
+</h2>
+
+
+<p class="fade">
+
+Appointments must be confirmed in advance. Rescheduling requires at least 24 hours notice.
+
+</p>
+
+
+
+
+
+
+
+<h2 class="fade">
+Refund Policy
+</h2>
+
+
+<p class="fade">
+
+No refunds will be issued after service completion unless otherwise approved by management.
+
+</p>
+
+
+
+
+
+
+
+<h2 class="fade">
+Liability
+</h2>
+
+
+<p class="fade">
+
+The company is not responsible for pre-existing damages or customer negligence.
+
+</p>
+
+
+
+
+
+
+
+
+
+<!-- ================= ACTION BUTTONS ================= -->
+
+
+<div class="action-buttons">
+
+
+<button 
+class="legal-btn"
+onclick="openSignBox()">
+
+✍️ Accept & Sign
+
+</button>
+
+
+
+
+<a 
+class="legal-btn"
+href="service-agreement.pdf"
+target="_blank">
+
+📄 Download PDF
+
+</a>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- ================= SIGN BOX ================= -->
+
+
+<div id="signBox" class="sign-box">
+
+
+
+<h2>
+Sign Service Agreement
+</h2>
+
+
+
+
+
+<input 
+class="input"
+type="text"
+id="name"
+placeholder="Full Name">
+
+
+
+
+
+
+<input 
+class="input"
+type="email"
+id="email"
+placeholder="Email">
+
+
+
+
+
+
+<input 
+class="input"
+type="text"
+id="phone"
+placeholder="Phone Number">
+
+
+
+
+
+
+<input 
+class="input"
+type="text"
+id="typedName"
+placeholder="Type Your Full Legal Name">
+
+
+
+
+
+
+<canvas 
+id="pad"
+width="400"
+height="150">
+</canvas>
+
+
+
+
+
+
+<button 
+class="legal-btn"
+onclick="submitContract()">
+
+Submit & Sign
+
+</button>
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ================= FOOTER ================= -->
+
+
+<footer class="legal-footer">
+
+
+
+<a href="../legal/privacy.html">
+🔒 Privacy
+</a>
+
+
+
+
+<a href="../legal/terms.html">
+📜 Terms
+</a>
+
+
+
+
+<a href="../legal/refund.html">
+💰 Refund
+</a>
+
+
+
+
+
+<a href="client-contract.html">
+📄 Client Contract
+</a>
+
+
+
+
+
+<a href="contractor-agreement.html">
+👷 Contractor Agreement
+</a>
+
+
+
+
+
+<a href="../documents.html">
+📄 Documents
+</a>
+
+
+
+</footer>
+
+
+
+
+
+
+
+
+
+<script>
+
+
+
+function openSignBox(){
+
+document
+.getElementById("signBox")
+.style.display="block";
+
+}
+
+
+
+
+
+
+
+async function submitContract(){
+
+
+try{
+
+
+const data = {
+
+
+name:
+document.getElementById("name").value,
+
+
+email:
+document.getElementById("email").value,
+
+
+phone:
+document.getElementById("phone").value,
+
+
+typedName:
+document.getElementById("typedName").value,
+
+
+contractType:
+"Service Agreement",
+
+
+
+signature:
+"base64-image-placeholder"
+
+
+
+};
+
+
+
+
+
+
+const res =
+await fetch(
+"/api/sign-contract",
+{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+},
+
+
+body:
+JSON.stringify(data)
+
+
+});
+
+
+
+
+
+
+const result =
+await res.json();
+
+
+
+
+
+
+if(result.success){
+
+
+alert(
+"Agreement Signed Successfully!"
+);
+
+
+
+window.location.href =
+result.contract.pdfUrl;
+
+
+
+}
+
+else{
+
+
+alert(
+result.error || "Signing failed"
+);
+
+
+}
+
+
+
+}
+
+catch(err){
+
+
+console.log(err);
+
+
+alert(
+"Server connection error"
+);
+
+
+}
+
+
+
+}
+
+
+
+</script>
+
+
+
+
+
+</body>
+
+</html>

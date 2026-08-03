@@ -1,0 +1,174 @@
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #0b1220;
+  color: #e5e7eb;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #0f172a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  z-index: 1000;
+  border-bottom: 1px solid #1f2937;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  color: #22c55e;
+}
+
+.hamburger {
+  display: none;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+}
+
+/* ================= PAGE ================= */
+.booking-page {
+  padding: 100px 20px 50px;
+  display: flex;
+  justify-content: center;
+}
+
+/* CARD */
+.booking-card {
+  background: #111827;
+  padding: 25px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.booking-card h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.sub {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #94a3b8;
+}
+
+/* INPUTS */
+.input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: white;
+}
+
+/* CALENDAR */
+#calendar {
+  /* background: white; */
+   background: navy;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+#selectedDate {
+  text-align: center;
+  margin: 10px 0;
+  color: #22c55e;
+}
+
+/* BUTTONS */
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.pay {
+  background: #22c55e;
+  color: white;
+}
+
+.later {
+  background: #3b82f6;
+  color: white;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+  .nav-links {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: #0f172a;
+    flex-direction: column;
+    width: 200px;
+    display: none;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .btn-group {
+    flex-direction: column;
+  }
+}
+/*  */
+.blocked-day {
+  background-color: #fecaca !important;
+  opacity: 0.6;
+  pointer-events: none;
+}
+/*  */
+.blocked-day {
+  background: #ef4444 !important;
+  color: white !important;
+  opacity: 0.7;
+  pointer-events: none;
+}

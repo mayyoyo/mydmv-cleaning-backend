@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Job Completion Form | My DMV Cleaning Services</title>
+
+<link rel="stylesheet" href="../css/legal.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="legal-nav">
+
+<div class="logo">
+🧼 My DMV Cleaning Services
+</div>
+
+<nav>
+
+<a href="../index.html">🏠 Home</a>
+<a href="../booking.html">📅 Booking</a>
+<a href="../documents.html">📄 Documents</a>
+
+</nav>
+
+</header>
+
+
+
+<!-- ================= PAGE ================= -->
+
+<div class="container">
+
+<h1 class="fade">
+✅ Job Completion Form
+</h1>
+
+<p class="effective fade">
+Complete and submit after finishing a cleaning job.
+</p>
+
+
+
+<div class="sign-box">
+
+<form id="completionForm">
+
+
+<label>Job ID</label>
+<input class="input" id="jobId" placeholder="Enter Job ID" required>
+
+
+<label>Your Name</label>
+<input class="input" id="workerName" placeholder="Enter your full name" required>
+
+
+<label>Job Status</label>
+<select class="input" id="status">
+<option value="completed">✅ Completed</option>
+<option value="in-progress">⏳ In Progress</option>
+<option value="review">⚠️ Needs Review</option>
+</select>
+
+
+<label>Work Notes / Issues</label>
+<textarea class="input textarea" id="notes"
+placeholder="Describe completed work, damages, issues, or customer requests"></textarea>
+
+
+<div class="buttons">
+
+<button class="legal-btn" type="submit">
+✅ Submit Completion
+</button>
+
+</div>
+
+
+</form>
+
+<p id="msg"></p>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="legal-footer">
+
+<a href="../legal/privacy.html">🔒 Privacy</a>
+<a href="../legal/terms.html">📜 Terms</a>
+<a href="../legal/refund.html">💰 Refund</a>
+
+<a href="../documents/client-contract.html">📄 Client Contract</a>
+<a href="../documents/contractor-agreement.html">👷 Contractor Agreement</a>
+<a href="../documents.html">📄 Documents</a>
+
+</footer>
+
+
+
+<script>
+
+// ================= JOB SUBMIT =================
+document.getElementById("completionForm").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const msg = document.getElementById("msg");
+
+const data = {
+    jobId: document.getElementById("jobId").value,
+    workerName: document.getElementById("workerName").value,
+    status: document.getElementById("status").value,
+    notes: document.getElementById("notes").value
+};
+
+try{
+
+msg.innerText = "⏳ Submitting...";
+
+const res = await fetch("/api/job-complete",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(data)
+});
+
+const result = await res.json();
+
+if(result.success){
+    msg.innerText = "✅ Job submitted successfully!";
+    document.getElementById("completionForm").reset();
+}else{
+    msg.innerText = "❌ " + (result.error || "Submission failed");
+}
+
+}catch(err){
+    console.log(err);
+    msg.innerText = "❌ Server connection error";
+}
+
+});
+
+</script>
+
+</body>
+</html>

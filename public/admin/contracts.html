@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contractors Admin</title>
+
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>Admin Panel</h2>
+
+  <a href="contractors.html">Contracts</a>
+  <a href="contacts.html">Messages</a>
+  <a href="dashboard.html">Dashboard</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="topbar">
+    <h1>Signed Contracts</h1>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Search contracts...">
+  </div>
+
+  <!-- TABLE -->
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Contract Type</th>
+        <th>Date</th>
+        <th>PDF</th>
+      </tr>
+    </thead>
+
+    <tbody id="list"></tbody>
+  </table>
+
+</div>
+
+<script>
+let allContracts = [];
+
+async function loadContracts() {
+  try {
+    const res = await fetch("/api/admin/contracts");
+    const data = await res.json();
+
+    allContracts = data;
+    render(data);
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function render(data) {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(c => {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${c.name || ""}</td>
+      <td>${c.email || ""}</td>
+      <td>${c.phone || ""}</td>
+      <td>${c.contractType || ""}</td>
+      <td>${new Date(c.createdAt).toLocaleDateString()}</td>
+      <td><a class="btn approve" href="${c.pdfUrl}" target="_blank">Open</a></td>
+    `;
+
+    list.appendChild(row);
+  });
+}
+
+// SEARCH FUNCTION
+document.getElementById("search").addEventListener("input", function(e) {
+  const value = e.target.value.toLowerCase();
+
+  const filtered = allContracts.filter(c =>
+    (c.name || "").toLowerCase().includes(value) ||
+    (c.email || "").toLowerCase().includes(value) ||
+    (c.contractType || "").toLowerCase().includes(value)
+  );
+
+  render(filtered);
+});
+
+loadContracts();
+</script>
+
+</body>
+</html>

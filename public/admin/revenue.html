@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Revenue Dashboard</title>
+<link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>Admin</h2>
+  <a href="dashboard.html">Dashboard</a>
+  <a href="revenue.html">Revenue</a>
+</div>
+
+<div class="main">
+  <h1>💰 Revenue Dashboard</h1>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Total Revenue (Deposits)</h3>
+      <p id="revenue">$0</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:3000";
+
+async function loadRevenue() {
+  const res = await fetch(`${API}/admin/revenue`);
+  const data = await res.json();
+
+  document.getElementById("revenue").innerText = "$" + data.total;
+}
+
+loadRevenue();
+setInterval(loadRevenue, 5000);
+</script>
+
+</body>
+</html>

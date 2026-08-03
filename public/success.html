@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Booking Confirmed</title>
+
+<link rel="stylesheet" href="./css/success.css">
+
+</head>
+
+
+<body>
+
+
+<div class="success-container">
+
+<div class="card">
+
+<div class="business-header">
+
+<h2>🧼 My DMV Cleaning Services LLC</h2>
+
+<p>📞 703-967-0674</p>
+
+<p>Professional Cleaning Services</p>
+
+</div>
+
+<hr>
+
+
+<div class="icon">✅</div>
+
+<h1>Booking Confirmed!</h1>
+
+<p class="sub">
+Your cleaning service has been successfully scheduled.
+</p>
+
+
+
+<!-- CUSTOMER -->
+<h3>👤 Customer Information</h3>
+
+<div class="details">
+
+<div><strong>Name:</strong> <span id="name"></span></div>
+<div><strong>Email:</strong> <span id="email"></span></div>
+<div><strong>Phone:</strong> <span id="phone"></span></div>
+<div><strong>Address:</strong> <span id="address"></span></div>
+
+</div>
+
+
+
+<!-- SERVICE -->
+<h3>🧹 Cleaning Appointment</h3>
+
+<div class="details">
+
+<div><strong>Service:</strong> <span id="service"></span></div>
+<div><strong>Date:</strong> <span id="date"></span></div>
+<div><strong>Time:</strong> <span id="time"></span></div>
+
+</div>
+
+
+
+<!-- PAYMENT -->
+<h3>💳 Payment Details</h3>
+
+<div class="payment-box">
+
+<div><strong>Total Service Price:</strong> $<span id="price"></span></div>
+
+<div><strong>Deposit Required (25%):</strong> $<span id="deposit"></span></div>
+
+<div><strong>Deposit Paid:</strong> <span id="depositStatus"></span></div>
+
+<div><strong>Remaining Balance:</strong> $<span id="remaining"></span></div>
+
+<div>
+<strong>Payment Status:</strong>
+<span class="status" id="paymentStatus"></span>
+</div>
+
+</div>
+
+
+
+<div class="notice" id="notice">
+
+<p>Thank you for choosing My DMV Cleaning Services LLC.</p>
+<p>Your appointment details have been saved.</p>
+
+</div>
+
+
+<a href="index.html" class="btn">🏠 Back to Home</a>
+
+</div>
+</div>
+
+
+
+
+<script>
+
+// ================= SAFE LOAD =================
+function safeJSON(key){
+  try{
+    return JSON.parse(localStorage.getItem(key)) || {};
+  } catch {
+    return {};
+  }
+}
+
+// ================= LOAD DATA =================
+let data = safeJSON("bookingData");
+
+// 🚨 fallback if empty
+if(!data || !data.name){
+  document.getElementById("notice").innerHTML =
+  "<p>No booking data found.</p>";
+}
+
+
+
+// ================= CALCULATIONS =================
+const total = Number(data.price || 0);
+
+const deposit =
+Number(data.deposit) ||
+Math.round(total * 0.25 * 100) / 100;
+
+let remaining;
+
+if(data.paymentType === "pay-now"){
+  remaining = total - deposit;
+} else {
+  remaining = total;
+}
+
+
+
+// ================= DISPLAY =================
+document.getElementById("name").innerText = data.name || "N/A";
+document.getElementById("email").innerText = data.email || "N/A";
+document.getElementById("phone").innerText = data.phone || "N/A";
+document.getElementById("address").innerText = data.address || "N/A";
+
+document.getElementById("service").innerText = data.serviceName || "Cleaning Service";
+document.getElementById("date").innerText = data.date || "N/A";
+document.getElementById("time").innerText = data.time || "N/A";
+
+document.getElementById("price").innerText = total.toFixed(2);
+document.getElementById("deposit").innerText = deposit.toFixed(2);
+document.getElementById("remaining").innerText = remaining.toFixed(2);
+
+
+
+// ================= PAYMENT STATUS =================
+if(data.paymentType === "pay-now"){
+
+  document.getElementById("depositStatus").innerText = "Paid ✅";
+
+  document.getElementById("paymentStatus").innerText = "Deposit Paid";
+  document.getElementById("paymentStatus").style.color = "green";
+
+} else {
+
+  document.getElementById("depositStatus").innerText = "Not Paid";
+
+  document.getElementById("paymentStatus").innerText = "Pay Later";
+  document.getElementById("paymentStatus").style.color = "orange";
+
+}
+
+
+// ================= SAVE CLEANUP (optional) =================
+// localStorage.removeItem("bookingData");
+
+</script>
+
+
+</body>
+</html>

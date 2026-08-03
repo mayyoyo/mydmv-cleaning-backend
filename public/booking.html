@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Book Cleaning Service</title>
+
+<link rel="stylesheet" href="./css/booking.css">
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+<div class="logo">
+🧼 My DMV Cleaning Services
+</div>
+
+
+<div class="hamburger" onclick="toggleMenu()">
+☰
+</div>
+
+
+<nav class="nav-links" id="navLinks">
+
+<a href="index.html">
+🏠 Home
+</a>
+
+
+<a href="booking.html">
+📅 Booking
+</a>
+
+</nav>
+
+</header>
+
+
+
+
+
+<main class="booking-page">
+
+<section class="booking-card">
+
+
+<h2>
+📅 Book Cleaning Service
+</h2>
+
+
+<div id="calendar"></div>
+
+
+<p id="selectedDate">
+No date selected
+</p>
+
+
+
+
+
+<select id="service" class="input">
+
+<option value="">
+Select Service
+</option>
+
+<option value="120">
+House Cleaning - $120
+</option>
+
+<option value="180">
+Office Cleaning - $180
+</option>
+
+<option value="200">
+Deep Cleaning - $200
+</option>
+
+<option value="250">
+Move In/Out Cleaning - $250
+</option>
+
+</select>
+
+
+
+
+
+
+<select id="timeSlot" class="input">
+
+<option value="">
+Select Time
+</option>
+
+<option value="08:00-10:00">
+08:00-10:00
+</option>
+
+<option value="10:00-12:00">
+10:00-12:00
+</option>
+
+<option value="12:00-14:00">
+12:00-14:00
+</option>
+
+<option value="14:00-16:00">
+14:00-16:00
+</option>
+
+<option value="16:00-18:00">
+16:00-18:00
+</option>
+
+</select>
+
+
+
+
+
+<input 
+id="name" 
+class="input" 
+placeholder="Full Name">
+
+
+<input 
+id="phone" 
+class="input" 
+placeholder="Phone">
+
+
+<input 
+id="email" 
+class="input" 
+placeholder="Email">
+
+
+<input 
+id="address" 
+class="input" 
+placeholder="Address">
+
+
+
+
+
+
+<div class="btn-group">
+
+
+<button onclick="payNow()" class="btn pay">
+
+💳 Pay Now (25% Deposit)
+
+</button>
+
+
+
+<button onclick="payLater()" class="btn later">
+
+📌 Pay Later
+
+</button>
+
+
+
+</div>
+
+
+</section>
+
+</main>
+
+
+
+
+
+
+<script>
+
+
+const API = "http://localhost:3000";
+
+
+let selectedDate = null;
+
+
+
+
+function toggleMenu(){
+
+document
+.getElementById("navLinks")
+.classList.toggle("active");
+
+}
+
+
+
+
+
+
+// ================= CALENDAR =================
+
+
+document.addEventListener(
+"DOMContentLoaded",
+async()=>{
+
+
+let blockedDates=[];
+
+
+try{
+
+
+const res = await fetch(
+`${API}/api/blocked-dates`
+);
+
+
+blockedDates = await res.json();
+
+
+}
+catch(err){
+
+console.log(err);
+
+}
+
+
+
+
+
+const calendar =
+new FullCalendar.Calendar(
+
+document.getElementById("calendar"),
+
+{
+
+
+initialView:
+"dayGridMonth",
+
+
+
+dateClick:
+async function(info){
+
+
+selectedDate =
+info.dateStr;
+
+
+document.getElementById("selectedDate")
+.innerText =
+"Selected: " + selectedDate;
+
+
+
+await loadBookedSlots(selectedDate);
+
+
+},
+
+
+
+
+dayCellDidMount(info){
+
+
+let date =
+info.date
+.toISOString()
+.split("T")[0];
+
+
+
+if(blockedDates.includes(date)){
+
+
+info.el.style.opacity="0.5";
+
+info.el.style.pointerEvents="none";
+
+
+}
+
+
+}
+
+
+
+});
+
+
+calendar.render();
+
+
+
+});
+
+// ================= LOAD BOOKED SLOTS =================
+
+async function loadBookedSlots(date){
+
+const res =
+await fetch(
+`${API}/api/bookings-by-date/${date}`
+);
+
+
+const booked =
+await res.json();
+
+
+
+const select =
+document.getElementById("timeSlot");
+
+
+
+Array.from(select.options)
+.forEach(opt=>{
+
+
+if(opt.value==="")
+return;
+
+
+opt.disabled=false;
+
+opt.text=opt.value;
+
+
+});
+
+
+
+booked.forEach(slot=>{
+
+
+let option =
+Array.from(select.options)
+.find(o=>o.value===slot);
+
+
+
+if(option){
+
+option.disabled=true;
+
+option.text =
+slot + " (Booked)";
+
+}
+
+
+});
+
+
+}
+
+
+
+
+
+
+// ================= COLLECT FORM =================
+
+
+function collectForm(){
+
+
+const service =
+document.getElementById("service");
+
+
+
+const data = {
+
+
+name:
+document.getElementById("name")
+.value.trim(),
+
+
+phone:
+document.getElementById("phone")
+.value.trim(),
+
+
+email:
+document.getElementById("email")
+.value.trim(),
+
+
+address:
+document.getElementById("address")
+.value.trim(),
+
+
+
+service:
+service.selectedOptions[0]?.text || "",
+
+
+
+serviceName:
+service.selectedOptions[0]?.text || "",
+
+
+
+price:
+Number(service.value),
+
+
+
+date:
+selectedDate,
+
+
+
+timeSlot:
+document.getElementById("timeSlot").value,
+
+
+
+time:
+document.getElementById("timeSlot").value
+
+
+};
+
+
+
+
+if(!data.date){
+
+alert("Please select a date");
+
+throw "Missing date";
+
+}
+
+
+
+
+if(
+!data.name ||
+!data.phone ||
+!data.email ||
+!data.address ||
+!data.price ||
+!data.timeSlot
+
+){
+
+alert("Please complete all fields");
+
+throw "Missing fields";
+
+}
+
+
+
+return data;
+
+
+}
+
+
+
+
+
+
+
+// ================= PAY NOW =================
+
+
+async function payNow(){
+
+
+try{
+
+
+const data =
+collectForm();
+
+
+
+data.paymentType =
+"pay-now";
+
+
+
+
+
+data.deposit =
+Math.round(
+data.price * 0.25 * 100
+) / 100;
+
+
+
+data.remaining =
+data.price - data.deposit;
+
+
+
+
+
+
+
+// ✅ SAVE BEFORE STRIPE REDIRECT
+
+localStorage.setItem(
+"bookingData",
+
+JSON.stringify({
+
+name:data.name,
+
+email:data.email,
+
+phone:data.phone,
+
+address:data.address,
+
+
+serviceName:data.serviceName,
+
+
+price:data.price,
+
+
+date:data.date,
+
+
+time:data.timeSlot,
+
+
+deposit:data.deposit,
+
+
+remaining:data.remaining,
+
+
+paymentType:data.paymentType
+
+
+})
+
+);
+
+
+
+
+
+
+
+
+const res =
+await fetch(
+
+`${API}/api/create-deposit-checkout`,
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":
+"application/json"
+
+},
+
+
+body:
+JSON.stringify(data)
+
+
+}
+
+);
+
+
+
+
+
+const result =
+await res.json();
+
+
+
+
+
+if(!result.url){
+
+throw "Stripe checkout failed";
+
+}
+
+
+
+
+
+window.location.href =
+result.url;
+
+
+
+}
+
+
+catch(err){
+
+console.log(err);
+
+alert("Payment error");
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+// ================= PAY LATER =================
+
+
+async function payLater(){
+
+
+try{
+
+
+const data =
+collectForm();
+
+
+
+
+data.paymentType =
+"pay-later";
+
+
+
+data.deposit =
+Math.round(
+data.price * 0.25 * 100
+) / 100;
+
+
+
+data.remaining =
+data.price;
+
+
+
+
+
+
+
+const res =
+await fetch(
+
+`${API}/api/book-pay-later`,
+
+{
+
+
+method:"POST",
+
+
+headers:{
+
+"Content-Type":
+
+"application/json"
+
+},
+
+
+body:
+
+JSON.stringify(data)
+
+
+}
+
+);
+
+
+
+
+
+if(!res.ok){
+
+throw "Booking failed";
+
+}
+
+
+
+
+
+
+
+// ✅ SAVE BEFORE SUCCESS PAGE
+
+localStorage.setItem(
+"bookingData",
+
+JSON.stringify({
+
+name:data.name,
+
+email:data.email,
+
+phone:data.phone,
+
+address:data.address,
+
+
+serviceName:data.serviceName,
+
+
+price:data.price,
+
+
+date:data.date,
+
+
+time:data.timeSlot,
+
+
+deposit:data.deposit,
+
+
+remaining:data.remaining,
+
+
+paymentType:data.paymentType
+
+
+})
+
+);
+
+
+
+
+
+
+// ✅ GO TO SUCCESS PAGE
+
+window.location.href =
+"success.html";
+
+
+
+
+
+}
+
+
+catch(err){
+
+
+console.log(err);
+
+
+alert("Booking error");
+
+
+}
+
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>

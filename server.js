@@ -1336,17 +1336,18 @@ error:"Database error"
 }
 
 
-
 res.json({
 
 success:true,
 
 contract:
-
-"/download-contract/"+pdfFile
+(process.env.BACKEND_URL || "http://localhost:5000")
++
+"/download-contract/"
++
+pdfFile
 
 });
-
 
 });
 

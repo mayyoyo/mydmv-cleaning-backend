@@ -1410,31 +1410,28 @@ error:"Server error"
 
 });
 // 
+// ==========================
+// TEST ROUTE
+// ==========================
 
-app.get("/api/test",(req,res)=>{
-  res.json({
-    success:true,
-    message:"BACKEND UPDATED",
-    date:new Date()
-  });
+app.get("/api/test", (req,res)=>{
+
+res.json({
+message:"NEW BACKEND IS WORKING",
+time:new Date()
 });
-// 
+
+});
+
 
 // ==========================
 // SERVER START
 // ==========================
-app.listen(
 
-PORT,
-
-()=>{
-
+app.listen(PORT,()=>{
 
 console.log(
-
-`Server running on http://localhost:${PORT}`
-
+`Server running on port ${PORT}`
 );
-
 
 });

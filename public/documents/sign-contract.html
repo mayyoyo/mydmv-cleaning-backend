@@ -10,7 +10,6 @@
 
 <link rel="stylesheet" href="../css/legal.css">
 
-
 </head>
 
 
@@ -25,90 +24,672 @@
 🧼 My DMV Cleaning Services
 </div>
 
+
 <nav>
 
-<a href="../index.html">🏠 Home</a>
-<a href="../booking.html">📅 Booking</a>
-<a href="../documents.html">📄 Documents</a>
+<a href="../index.html">
+🏠 Home
+</a>
+
+<a href="../booking.html">
+📅 Booking
+</a>
+
+<a href="../documents.html">
+📄 Documents
+</a>
 
 </nav>
 
 </header>
 
 
+
+
+
 <!-- ================= SIGN PAGE ================= -->
 
 <div class="container">
+
 
 <h1 class="fade">
 📝 Sign Your Contract
 </h1>
 
+
 <p class="effective fade">
+
 Please complete the information below to sign your service agreement.
+
 </p>
+
+
+
 
 
 <div class="sign-box">
 
-<label>Full Name</label>
-<input class="input" id="name" placeholder="Enter your full name">
 
 
-<label>Email</label>
-<input class="input" id="email" type="email" placeholder="Enter your email">
+<label>
+Full Name
+</label>
 
 
-<label>Phone Number</label>
-<input class="input" id="phone" placeholder="Enter your phone number">
+<input 
+class="input" 
+id="name"
+placeholder="Enter your full name">
 
 
-<label>Typed Signature</label>
-<input class="input" id="typedName" placeholder="Type Your Name as Signature">
 
 
-<h3>✍️ Draw Signature</h3>
 
-<canvas id="canvas" width="400" height="150"></canvas>
+<label>
+Email
+</label>
+
+
+<input 
+class="input"
+id="email"
+type="email"
+placeholder="Enter your email">
+
+
+
+
+
+
+<label>
+Phone Number
+</label>
+
+
+<input
+class="input"
+id="phone"
+placeholder="Enter your phone number">
+
+
+
+
+
+
+<label>
+Contract Type
+</label>
+
+
+<select 
+class="input"
+id="contractType">
+
+
+<option value="Service Agreement">
+Service Agreement
+</option>
+
+
+<option value="Client Contract">
+Client Contract
+</option>
+
+
+<option value="Contractor Agreement">
+Contractor Agreement
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+
+<label>
+Typed Signature
+</label>
+
+
+<input
+class="input"
+id="typedName"
+placeholder="Type Your Name as Signature">
+
+
+
+
+
+
+
+<h3>
+✍️ Draw Signature
+</h3>
+
+
+
+<canvas 
+id="canvas"
+width="400"
+height="150">
+</canvas>
+
+
+
+
 
 
 <div class="buttons">
 
-<button class="legal-btn clear" onclick="clearCanvas()">
+
+
+<button 
+class="legal-btn clear"
+onclick="clearCanvas()">
+
 🧹 Clear
+
 </button>
 
-<button class="legal-btn" onclick="submitContract()">
+
+
+
+
+<button 
+class="legal-btn"
+onclick="submitContract()">
+
 ✅ Sign & Submit
+
 </button>
 
-</div>
 
-<p id="msg"></p>
 
 </div>
 
+
+
+
+
+
+<div id="msg"></div>
+
+
+
+
+
 </div>
+
+
+</div>
+
+
+
+
+
+
+
 
 
 <!-- ================= FOOTER ================= -->
 
+
 <footer class="legal-footer">
 
-<a href="../legal/privacy.html">🔒 Privacy</a>
-<a href="../legal/terms.html">📜 Terms</a>
-<a href="../legal/refund.html">💰 Refund</a>
-<a href="client-contract.html">📄 Client Contract</a>
-<a href="contractor-agreement.html">👷 Contractor Agreement</a>
-<a href="../documents.html">📄 Documents</a>
+
+<a href="../legal/privacy.html">
+🔒 Privacy
+</a>
+
+
+<a href="../legal/terms.html">
+📜 Terms
+</a>
+
+
+<a href="../legal/refund.html">
+💰 Refund
+</a>
+
+
+<a href="client-contract.html">
+📄 Client Contract
+</a>
+
+
+<a href="contractor-agreement.html">
+👷 Contractor Agreement
+</a>
+
+
+<a href="../documents.html">
+📄 Documents
+</a>
+
+
 
 </footer>
 
 
-<!-- ✅ IMPORTANT: correct path -->
-<!-- <script src="/js/sign-contract.js"></script> -->
- <script src="/js/sign-contract.js"></script>
- 
+
+
+
+
+
+
+
+<script>
+
+
+// ==========================
+// SIGNATURE CANVAS
+// ==========================
+
+
+const canvas =
+document.getElementById("canvas");
+
+
+const ctx =
+canvas.getContext("2d");
+
+
+
+let drawing=false;
+
+
+
+
+canvas.addEventListener(
+"mousedown",
+()=>{
+
+drawing=true;
+
+});
+
+
+
+canvas.addEventListener(
+"mouseup",
+()=>{
+
+drawing=false;
+
+ctx.beginPath();
+
+});
+
+
+
+canvas.addEventListener(
+"mousemove",
+draw
+);
+
+
+
+
+function draw(e){
+
+
+if(!drawing)
+return;
+
+
+
+const rect =
+canvas.getBoundingClientRect();
+
+
+
+ctx.lineWidth=2;
+
+ctx.lineCap="round";
+
+
+
+ctx.lineTo(
+
+e.clientX - rect.left,
+
+e.clientY - rect.top
+
+);
+
+
+
+ctx.stroke();
+
+
+
+ctx.beginPath();
+
+
+
+ctx.moveTo(
+
+e.clientX - rect.left,
+
+e.clientY - rect.top
+
+);
+
+
+
+}
+
+
+
+
+
+
+
+// ==========================
+// CLEAR CANVAS
+// ==========================
+
+
+function clearCanvas(){
+
+
+ctx.clearRect(
+
+0,
+
+0,
+
+canvas.width,
+
+canvas.height
+
+);
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// SUBMIT CONTRACT
+// ==========================
+
+
+async function submitContract(){
+
+
+
+const data = {
+
+
+name:
+
+document
+.getElementById("name")
+.value.trim(),
+
+
+
+email:
+
+document
+.getElementById("email")
+.value.trim(),
+
+
+
+
+phone:
+
+document
+.getElementById("phone")
+.value.trim(),
+
+
+
+
+typedName:
+
+document
+.getElementById("typedName")
+.value.trim(),
+
+
+
+
+contractType:
+
+document
+.getElementById("contractType")
+.value,
+
+
+
+
+signature:
+
+canvas.toDataURL(
+"image/png"
+)
+
+
+};
+
+
+
+
+
+
+if(
+
+!data.name ||
+
+!data.email ||
+
+!data.typedName
+
+){
+
+
+alert(
+"Please complete required fields"
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+
+try{
+
+
+
+const res =
+await fetch(
+
+"http://localhost:5000/api/contracts/sign",
+
+{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":
+
+"application/json"
+
+
+},
+
+
+
+body:
+
+JSON.stringify(data)
+
+
+
+}
+
+);
+
+
+
+
+
+const result =
+await res.json();
+
+
+
+
+
+
+
+if(result.success){
+
+
+
+document.getElementById("msg").innerHTML =
+
+
+
+`
+
+<div style="margin-top:25px;">
+
+
+<h3 style="color:green;">
+
+✅ Contract signed successfully!
+
+</h3>
+
+
+
+<a
+
+href="${result.contract}"
+
+target="_blank"
+
+style="
+
+display:inline-block;
+
+margin-top:15px;
+
+padding:12px 20px;
+
+background:#007bff;
+
+color:white;
+
+border-radius:8px;
+
+text-decoration:none;
+
+font-size:18px;
+
+">
+
+📄 Download Signed Contract PDF
+
+</a>
+
+
+
+</div>
+
+`;
+
+
+
+
+
+}
+
+else{
+
+
+document.getElementById("msg").innerHTML =
+
+
+`
+
+<p style="color:red">
+
+${result.error || "Contract signing failed"}
+
+</p>
+
+`;
+
+
+
+}
+
+
+
+}
+
+catch(err){
+
+
+
+console.log(err);
+
+
+
+document.getElementById("msg").innerHTML =
+
+
+`
+
+<p style="color:red">
+
+Server error. Please try again.
+
+</p>
+
+`;
+
+
+
+}
+
+
+
+}
+
+
+
+</script>
+
+
 
 </body>
+
 </html>

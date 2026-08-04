@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Contact Us | My DMV Cleaning Services LLC</title>
+
+<link rel="stylesheet" href="./css/style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>
+📞 Contact My DMV Cleaning Services LLC
+</h1>
+
+
+<p>
+Have questions? Send us a message and we will get back to you.
+</p>
+
+
+
+
+<form id="contactForm">
+
+
+<label>
+Name
+</label>
+
+<input 
+type="text"
+id="name"
+required
+placeholder="Your name">
+
+
+
+
+
+<label>
+Email
+</label>
+
+<input 
+type="email"
+id="email"
+required
+placeholder="Your email">
+
+
+
+
+
+<label>
+Phone
+</label>
+
+<input 
+type="text"
+id="phone"
+placeholder="Your phone number">
+
+
+
+
+
+<label>
+Message
+</label>
+
+
+<textarea
+id="message"
+rows="5"
+required
+placeholder="Write your message">
+</textarea>
+
+
+
+
+<button type="submit">
+
+📩 Send Message
+
+</button>
+
+
+
+<p id="result"></p>
+
+
+
+</form>
+
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+const API =
+"http://localhost:5000";
+
+
+
+document
+.getElementById("contactForm")
+.addEventListener(
+"submit",
+async function(e){
+
+
+e.preventDefault();
+
+
+
+const data = {
+
+
+name:
+document.getElementById("name").value,
+
+
+email:
+document.getElementById("email").value,
+
+
+phone:
+document.getElementById("phone").value,
+
+
+message:
+document.getElementById("message").value
+
+
+};
+
+
+
+
+try{
+
+
+const res =
+await fetch(
+
+API + "/api/contact",
+
+{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":
+"application/json"
+
+
+},
+
+
+body:
+JSON.stringify(data)
+
+
+}
+
+
+);
+
+
+
+
+
+const result =
+await res.json();
+
+
+
+
+if(result.success){
+
+
+document.getElementById("result").innerHTML =
+
+"✅ Message sent successfully!";
+
+
+document
+.getElementById("contactForm")
+.reset();
+
+
+}
+
+else{
+
+
+document.getElementById("result").innerHTML =
+
+"❌ Message failed";
+
+
+}
+
+
+
+}
+
+catch(err){
+
+
+console.log(err);
+
+
+document.getElementById("result").innerHTML =
+
+"❌ Server error";
+
+
+}
+
+
+
+});
+
+
+</script>
+
+
+
+</body>
+
+</html>

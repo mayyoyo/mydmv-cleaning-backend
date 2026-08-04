@@ -70,8 +70,6 @@ No date selected
 
 
 
-
-
 <select id="service" class="input">
 
 <option value="">
@@ -95,9 +93,6 @@ Move In/Out Cleaning - $250
 </option>
 
 </select>
-
-
-
 
 
 
@@ -132,32 +127,13 @@ Select Time
 
 
 
+<input id="name" class="input" placeholder="Full Name">
 
-<input 
-id="name" 
-class="input" 
-placeholder="Full Name">
+<input id="phone" class="input" placeholder="Phone">
 
+<input id="email" class="input" placeholder="Email">
 
-<input 
-id="phone" 
-class="input" 
-placeholder="Phone">
-
-
-<input 
-id="email" 
-class="input" 
-placeholder="Email">
-
-
-<input 
-id="address" 
-class="input" 
-placeholder="Address">
-
-
-
+<input id="address" class="input" placeholder="Address">
 
 
 
@@ -192,10 +168,12 @@ placeholder="Address">
 
 
 
+
 <script>
 
 
-const API = "http://localhost:3000";
+// ✅ FIXED PORT
+const API = "http://localhost:5000";
 
 
 let selectedDate = null;
@@ -215,38 +193,11 @@ document
 
 
 
-
 // ================= CALENDAR =================
-
 
 document.addEventListener(
 "DOMContentLoaded",
 async()=>{
-
-
-let blockedDates=[];
-
-
-try{
-
-
-const res = await fetch(
-`${API}/api/blocked-dates`
-);
-
-
-blockedDates = await res.json();
-
-
-}
-catch(err){
-
-console.log(err);
-
-}
-
-
-
 
 
 const calendar =
@@ -279,34 +230,7 @@ document.getElementById("selectedDate")
 await loadBookedSlots(selectedDate);
 
 
-},
-
-
-
-
-dayCellDidMount(info){
-
-
-let date =
-info.date
-.toISOString()
-.split("T")[0];
-
-
-
-if(blockedDates.includes(date)){
-
-
-info.el.style.opacity="0.5";
-
-info.el.style.pointerEvents="none";
-
-
 }
-
-
-}
-
 
 
 });
@@ -315,17 +239,27 @@ info.el.style.pointerEvents="none";
 calendar.render();
 
 
-
 });
+
+
+
+
+
+
 
 // ================= LOAD BOOKED SLOTS =================
 
 async function loadBookedSlots(date){
 
+
+try{
+
+
 const res =
 await fetch(
 `${API}/api/bookings-by-date/${date}`
 );
+
 
 
 const booked =
@@ -338,6 +272,9 @@ document.getElementById("timeSlot");
 
 
 
+
+// RESET OPTIONS
+
 Array.from(select.options)
 .forEach(opt=>{
 
@@ -348,19 +285,24 @@ return;
 
 opt.disabled=false;
 
-opt.text=opt.value;
+opt.textContent=opt.value;
 
 
 });
 
 
 
+
+// BLOCK BOOKED TIMES
+
 booked.forEach(slot=>{
 
 
-let option =
+const option =
 Array.from(select.options)
-.find(o=>o.value===slot);
+.find(
+o=>o.value===slot
+);
 
 
 
@@ -368,7 +310,7 @@ if(option){
 
 option.disabled=true;
 
-option.text =
+option.textContent =
 slot + " (Booked)";
 
 }
@@ -378,6 +320,18 @@ slot + " (Booked)";
 
 
 }
+catch(err){
+
+console.error(
+"Slot error:",
+err
+);
+
+}
+
+
+}
+
 
 
 
@@ -385,7 +339,6 @@ slot + " (Booked)";
 
 
 // ================= COLLECT FORM =================
-
 
 function collectForm(){
 
@@ -395,53 +348,43 @@ document.getElementById("service");
 
 
 
-const data = {
+const data={
 
 
 name:
-document.getElementById("name")
-.value.trim(),
+document.getElementById("name").value.trim(),
 
 
 phone:
-document.getElementById("phone")
-.value.trim(),
+document.getElementById("phone").value.trim(),
 
 
 email:
-document.getElementById("email")
-.value.trim(),
+document.getElementById("email").value.trim(),
 
 
 address:
-document.getElementById("address")
-.value.trim(),
-
+document.getElementById("address").value.trim(),
 
 
 service:
 service.selectedOptions[0]?.text || "",
 
 
-
 serviceName:
 service.selectedOptions[0]?.text || "",
-
 
 
 price:
 Number(service.value),
 
 
-
 date:
 selectedDate,
 
 
-
 timeSlot:
 document.getElementById("timeSlot").value,
-
 
 
 time:
@@ -455,12 +398,11 @@ document.getElementById("timeSlot").value
 
 if(!data.date){
 
-alert("Please select a date");
-
-throw "Missing date";
+throw new Error(
+"Please select a date"
+);
 
 }
-
 
 
 
@@ -474,9 +416,9 @@ if(
 
 ){
 
-alert("Please complete all fields");
-
-throw "Missing fields";
+throw new Error(
+"Please complete all fields"
+);
 
 }
 
@@ -495,7 +437,6 @@ return data;
 
 // ================= PAY NOW =================
 
-
 async function payNow(){
 
 
@@ -507,72 +448,28 @@ collectForm();
 
 
 
-data.paymentType =
-"pay-now";
-
-
+data.paymentType="pay-now";
 
 
 
 data.deposit =
 Math.round(
-data.price * 0.25 * 100
-) / 100;
+data.price * .25 * 100
+)/100;
 
 
 
 data.remaining =
-data.price - data.deposit;
+data.price-data.deposit;
 
 
 
 
-
-
-
-// ✅ SAVE BEFORE STRIPE REDIRECT
 
 localStorage.setItem(
 "bookingData",
-
-JSON.stringify({
-
-name:data.name,
-
-email:data.email,
-
-phone:data.phone,
-
-address:data.address,
-
-
-serviceName:data.serviceName,
-
-
-price:data.price,
-
-
-date:data.date,
-
-
-time:data.timeSlot,
-
-
-deposit:data.deposit,
-
-
-remaining:data.remaining,
-
-
-paymentType:data.paymentType
-
-
-})
-
+JSON.stringify(data)
 );
-
-
-
 
 
 
@@ -589,20 +486,17 @@ method:"POST",
 
 headers:{
 
-"Content-Type":
-"application/json"
+"Content-Type":"application/json"
 
 },
 
-
 body:
-JSON.stringify(data)
 
+JSON.stringify(data)
 
 }
 
 );
-
 
 
 
@@ -613,13 +507,25 @@ await res.json();
 
 
 
+if(!res.ok){
 
-if(!result.url){
-
-throw "Stripe checkout failed";
+throw new Error(
+result.error ||
+"Stripe checkout failed"
+);
 
 }
 
+
+
+
+if(!result.url){
+
+throw new Error(
+"No Stripe URL returned"
+);
+
+}
 
 
 
@@ -632,17 +538,27 @@ result.url;
 }
 
 
+
 catch(err){
 
-console.log(err);
 
-alert("Payment error");
+console.error(
+"Stripe Error:",
+err
+);
+
+
+
+alert(
+err.message ||
+"Payment error"
+);
+
 
 }
 
 
 }
-
 
 
 
@@ -652,7 +568,6 @@ alert("Payment error");
 
 
 // ================= PAY LATER =================
-
 
 async function payLater(){
 
@@ -665,23 +580,19 @@ collectForm();
 
 
 
-
-data.paymentType =
-"pay-later";
+data.paymentType="pay-later";
 
 
 
 data.deposit =
 Math.round(
-data.price * 0.25 * 100
-) / 100;
+data.price * .25 * 100
+)/100;
 
 
 
 data.remaining =
-data.price;
-
-
+data.price-data.deposit;
 
 
 
@@ -694,35 +605,37 @@ await fetch(
 
 {
 
-
 method:"POST",
-
 
 headers:{
 
-"Content-Type":
-
-"application/json"
+"Content-Type":"application/json"
 
 },
-
 
 body:
 
 JSON.stringify(data)
 
-
 }
 
 );
 
+
+
+
+const result =
+await res.json();
 
 
 
 
 if(!res.ok){
 
-throw "Booking failed";
+throw new Error(
+result.error ||
+"Booking failed"
+);
 
 }
 
@@ -730,77 +643,44 @@ throw "Booking failed";
 
 
 
-
-
-// ✅ SAVE BEFORE SUCCESS PAGE
-
 localStorage.setItem(
 "bookingData",
-
-JSON.stringify({
-
-name:data.name,
-
-email:data.email,
-
-phone:data.phone,
-
-address:data.address,
-
-
-serviceName:data.serviceName,
-
-
-price:data.price,
-
-
-date:data.date,
-
-
-time:data.timeSlot,
-
-
-deposit:data.deposit,
-
-
-remaining:data.remaining,
-
-
-paymentType:data.paymentType
-
-
-})
-
+JSON.stringify(data)
 );
 
 
 
 
 
-
-// ✅ GO TO SUCCESS PAGE
-
 window.location.href =
 "success.html";
 
 
 
-
-
 }
+
 
 
 catch(err){
 
 
-console.log(err);
+console.error(
+
+"Pay Later Error:",
+
+err
+
+);
 
 
-alert("Booking error");
+
+alert(
+err.message
+);
+
 
 
 }
-
 
 
 }

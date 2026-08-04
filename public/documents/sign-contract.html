@@ -380,8 +380,11 @@ canvas.height
 // SUBMIT CONTRACT
 // ==========================
 
-async function submitContract(){
+// ==========================
+// SUBMIT CONTRACT
+// ==========================
 
+async function submitContract(){
 
 
 const API_URL =
@@ -399,7 +402,6 @@ window.location.hostname === "localhost"
 
 
 
-
 const data = {
 
 
@@ -409,12 +411,10 @@ document.getElementById("name")
 .trim(),
 
 
-
 email:
 document.getElementById("email")
 .value
 .trim(),
-
 
 
 phone:
@@ -423,18 +423,15 @@ document.getElementById("phone")
 .trim(),
 
 
-
 typedName:
 document.getElementById("typedName")
 .value
 .trim(),
 
 
-
 contractType:
 document.getElementById("contractType")
 .value,
-
 
 
 signature:
@@ -456,13 +453,11 @@ if(
 document.getElementById("msg").innerHTML =
 
 `
-
 <p style="color:red">
 
 ❌ Please complete required fields.
 
 </p>
-
 `;
 
 return;
@@ -476,19 +471,13 @@ return;
 try{
 
 
-
 document.getElementById("msg").innerHTML =
 
 `
-
 <p>
-
 ⏳ Sending contract...
-
 </p>
-
 `;
-
 
 
 
@@ -496,13 +485,11 @@ document.getElementById("msg").innerHTML =
 
 const res = await fetch(
 
-`${API_URL}/api/contracts/sign`,
+`${API_URL}/api/sign-contract`,
 
 {
 
-
 method:"POST",
-
 
 headers:{
 
@@ -510,9 +497,9 @@ headers:{
 
 },
 
+body:
 
-body:JSON.stringify(data)
-
+JSON.stringify(data)
 
 }
 
@@ -522,11 +509,7 @@ body:JSON.stringify(data)
 
 
 
-
-const result =
-await res.json();
-
-
+const result = await res.json();
 
 
 console.log(
@@ -538,9 +521,7 @@ result
 
 
 
-
 if(result.success && result.contract){
-
 
 
 document.getElementById("msg").innerHTML =
@@ -549,7 +530,6 @@ document.getElementById("msg").innerHTML =
 
 <div style="margin-top:25px">
 
-
 <h3 style="color:green">
 
 ✅ Contract signed successfully!
@@ -557,8 +537,7 @@ document.getElementById("msg").innerHTML =
 </h3>
 
 
-
-<a 
+<a
 
 href="${result.contract}"
 
@@ -584,12 +563,9 @@ font-size:18px;
 
 ">
 
-
 📄 Download Signed Contract PDF
 
-
 </a>
-
 
 </div>
 
@@ -632,7 +608,6 @@ error
 
 document.getElementById("msg").innerHTML =
 
-
 `
 
 <p style="color:red">
@@ -646,9 +621,7 @@ document.getElementById("msg").innerHTML =
 }
 
 
-
 }
-
 
 
 </script>

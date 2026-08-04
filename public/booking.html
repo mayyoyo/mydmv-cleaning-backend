@@ -171,27 +171,16 @@ Select Time
 
 <script>
 
-
-// ✅ FIXED PORT
-const API = "http://localhost:5000";
-
+// ✅ FIXED API URL (Render backend)
+const API = "https://dmv-cleaning-backend.onrender.com";
 
 let selectedDate = null;
 
-
-
-
 function toggleMenu(){
-
-document
-.getElementById("navLinks")
-.classList.toggle("active");
-
+  document
+    .getElementById("navLinks")
+    .classList.toggle("active");
 }
-
-
-
-
 
 // ================= CALENDAR =================
 
@@ -199,496 +188,61 @@ document.addEventListener(
 "DOMContentLoaded",
 async()=>{
 
+  const calendar =
+  new FullCalendar.Calendar(
+    document.getElementById("calendar"),
+    {
+      initialView:"dayGridMonth",
 
-const calendar =
-new FullCalendar.Calendar(
+      dateClick: async function(info){
 
-document.getElementById("calendar"),
+        selectedDate = info.dateStr;
 
-{
+        document.getElementById("selectedDate")
+        .innerText = "Selected: " + selectedDate;
 
+        await loadBookedSlots(selectedDate);
+      }
+    }
+  );
 
-initialView:
-"dayGridMonth",
-
-
-
-dateClick:
-async function(info){
-
-
-selectedDate =
-info.dateStr;
-
-
-document.getElementById("selectedDate")
-.innerText =
-"Selected: " + selectedDate;
-
-
-
-await loadBookedSlots(selectedDate);
-
-
-}
-
-
+  calendar.render();
 });
-
-
-calendar.render();
-
-
-});
-
-
-
-
-
-
 
 // ================= LOAD BOOKED SLOTS =================
 
 async function loadBookedSlots(date){
+  try{
 
+    const res =
+    await fetch(`${API}/api/bookings-by-date/${date}`);
 
-try{
+    const booked = await res.json();
 
+    const select = document.getElementById("timeSlot");
 
-const res =
-await fetch(
-`${API}/api/bookings-by-date/${date}`
-);
+    Array.from(select.options).forEach(opt=>{
+      if(opt.value==="") return;
+      opt.disabled=false;
+      opt.textContent=opt.value;
+    });
 
+    booked.forEach(slot=>{
+      const option =
+      Array.from(select.options)
+      .find(o=>o.value===slot);
 
+      if(option){
+        option.disabled=true;
+        option.textContent = slot + " (Booked)";
+      }
+    });
 
-const booked =
-await res.json();
-
-
-
-const select =
-document.getElementById("timeSlot");
-
-
-
-
-// RESET OPTIONS
-
-Array.from(select.options)
-.forEach(opt=>{
-
-
-if(opt.value==="")
-return;
-
-
-opt.disabled=false;
-
-opt.textContent=opt.value;
-
-
-});
-
-
-
-
-// BLOCK BOOKED TIMES
-
-booked.forEach(slot=>{
-
-
-const option =
-Array.from(select.options)
-.find(
-o=>o.value===slot
-);
-
-
-
-if(option){
-
-option.disabled=true;
-
-option.textContent =
-slot + " (Booked)";
-
+  } catch(err){
+    console.error("Slot error:", err);
+  }
 }
-
-
-});
-
-
-}
-catch(err){
-
-console.error(
-"Slot error:",
-err
-);
-
-}
-
-
-}
-
-
-
-
-
-
-
-// ================= COLLECT FORM =================
-
-function collectForm(){
-
-
-const service =
-document.getElementById("service");
-
-
-
-const data={
-
-
-name:
-document.getElementById("name").value.trim(),
-
-
-phone:
-document.getElementById("phone").value.trim(),
-
-
-email:
-document.getElementById("email").value.trim(),
-
-
-address:
-document.getElementById("address").value.trim(),
-
-
-service:
-service.selectedOptions[0]?.text || "",
-
-
-serviceName:
-service.selectedOptions[0]?.text || "",
-
-
-price:
-Number(service.value),
-
-
-date:
-selectedDate,
-
-
-timeSlot:
-document.getElementById("timeSlot").value,
-
-
-time:
-document.getElementById("timeSlot").value
-
-
-};
-
-
-
-
-if(!data.date){
-
-throw new Error(
-"Please select a date"
-);
-
-}
-
-
-
-if(
-!data.name ||
-!data.phone ||
-!data.email ||
-!data.address ||
-!data.price ||
-!data.timeSlot
-
-){
-
-throw new Error(
-"Please complete all fields"
-);
-
-}
-
-
-
-return data;
-
-
-}
-
-
-
-
-
-
-
-// ================= PAY NOW =================
-
-async function payNow(){
-
-
-try{
-
-
-const data =
-collectForm();
-
-
-
-data.paymentType="pay-now";
-
-
-
-data.deposit =
-Math.round(
-data.price * .25 * 100
-)/100;
-
-
-
-data.remaining =
-data.price-data.deposit;
-
-
-
-
-
-localStorage.setItem(
-"bookingData",
-JSON.stringify(data)
-);
-
-
-
-
-
-const res =
-await fetch(
-
-`${API}/api/create-deposit-checkout`,
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:
-
-JSON.stringify(data)
-
-}
-
-);
-
-
-
-
-const result =
-await res.json();
-
-
-
-
-if(!res.ok){
-
-throw new Error(
-result.error ||
-"Stripe checkout failed"
-);
-
-}
-
-
-
-
-if(!result.url){
-
-throw new Error(
-"No Stripe URL returned"
-);
-
-}
-
-
-
-
-window.location.href =
-result.url;
-
-
-
-}
-
-
-
-catch(err){
-
-
-console.error(
-"Stripe Error:",
-err
-);
-
-
-
-alert(
-err.message ||
-"Payment error"
-);
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-// ================= PAY LATER =================
-
-async function payLater(){
-
-
-try{
-
-
-const data =
-collectForm();
-
-
-
-data.paymentType="pay-later";
-
-
-
-data.deposit =
-Math.round(
-data.price * .25 * 100
-)/100;
-
-
-
-data.remaining =
-data.price-data.deposit;
-
-
-
-
-
-const res =
-await fetch(
-
-`${API}/api/book-pay-later`,
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:
-
-JSON.stringify(data)
-
-}
-
-);
-
-
-
-
-const result =
-await res.json();
-
-
-
-
-if(!res.ok){
-
-throw new Error(
-result.error ||
-"Booking failed"
-);
-
-}
-
-
-
-
-
-localStorage.setItem(
-"bookingData",
-JSON.stringify(data)
-);
-
-
-
-
-
-window.location.href =
-"success.html";
-
-
-
-}
-
-
-
-catch(err){
-
-
-console.error(
-
-"Pay Later Error:",
-
-err
-
-);
-
-
-
-alert(
-err.message
-);
-
-
-
-}
-
-
-}
-
-
-
 </script>
-
 
 </body>
 

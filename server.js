@@ -1109,8 +1109,11 @@ error:"Email failed"
 // ==========================
 // SIGN CONTRACT
 // ==========================
+// ==========================
+// SIGN CONTRACT
+// ==========================
 app.post(
-"/api/contracts/sign",
+"/api/sign-contract",
 (req,res)=>{
 
 
@@ -1145,6 +1148,8 @@ if(
 ){
 
 return res.status(400).json({
+
+success:false,
 
 error:"Missing fields"
 
@@ -1246,8 +1251,8 @@ align:"center"
 );
 
 
-
 pdf.moveDown();
+
 
 
 pdf.fontSize(12)
@@ -1266,6 +1271,7 @@ Date:
 ${new Date().toLocaleString()}
 
 `);
+
 
 
 
@@ -1325,9 +1331,9 @@ phone,
 
 contractType || "Service Agreement",
 
-"/signatures/"+signatureFile,
+"/signatures/" + signatureFile,
 
-"/signed-contracts/"+pdfFile,
+"/signed-contracts/" + pdfFile,
 
 new Date().toISOString()
 
@@ -1341,6 +1347,8 @@ if(err){
 
 return res.status(500).json({
 
+success:false,
+
 error:"Database error"
 
 });
@@ -1348,18 +1356,27 @@ error:"Database error"
 }
 
 
+
+
 res.json({
 
 success:true,
 
 contract:
-(process.env.BACKEND_URL || "http://localhost:5000")
+
+(process.env.BACKEND_URL ||
+"https://dmv-cleaning-backend.onrender.com")
+
 +
+
 "/download-contract/"
+
 +
+
 pdfFile
 
 });
+
 
 });
 
@@ -1368,12 +1385,20 @@ pdfFile
 
 
 }
+
+
 catch(err){
 
-console.log(err);
+
+console.log(
+"CONTRACT ERROR:",
+err
+);
 
 
 res.status(500).json({
+
+success:false,
 
 error:"Server error"
 
@@ -1383,349 +1408,6 @@ error:"Server error"
 }
 
 
-});
-// ==========================
-// PUBLIC CONTRACT DOWNLOAD
-// ==========================
-app.get(
-"/download-contract/:file",
-(req,res)=>{
-
-
-const filePath =
-path.join(
-
-__dirname,
-
-"public",
-
-"signed-contracts",
-
-req.params.file
-
-);
-
-
-
-if(!fs.existsSync(filePath)){
-
-return res.status(404)
-.send("Contract not found");
-
-}
-
-
-
-res.download(filePath);
-
-
-});
-
-
-
-
-
-// ==========================
-// ADMIN DOWNLOAD CONTRACT
-// ==========================
-app.get(
-"/admin/contracts/download/:file",
-verifyAdmin,
-(req,res)=>{
-
-
-const filePath =
-path.join(
-
-__dirname,
-
-"public",
-
-"signed-contracts",
-
-req.params.file
-
-);
-
-
-
-if(!fs.existsSync(filePath)){
-
-return res.status(404)
-.send("File not found");
-
-}
-
-
-
-res.download(filePath);
-
-
-});
-
-
-
-
-
-// ==========================
-// ADMIN DOWNLOAD SIGNATURE
-// ==========================
-app.get(
-"/admin/signatures/download/:file",
-verifyAdmin,
-(req,res)=>{
-
-
-const filePath =
-path.join(
-
-__dirname,
-
-"public",
-
-"signatures",
-
-req.params.file
-
-);
-
-
-
-if(!fs.existsSync(filePath)){
-
-return res.status(404)
-.send("File not found");
-
-}
-
-
-
-res.download(filePath);
-
-
-});
-
-
-
-
-
-// ==========================
-// GET SIGNED CONTRACTS
-// ==========================
-app.get(
-"/api/admin/contracts",
-verifyAdmin,
-(req,res)=>{
-
-
-db.all(
-
-`
-
-SELECT *
-
-FROM contracts
-
-ORDER BY id DESC
-
-`,
-
-(err,rows)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-error:"Database error"
-
-});
-
-}
-
-
-
-res.json(rows);
-
-
-
-});
-
-
-});
-
-
-
-
-
-// ==========================
-// DELETE CONTRACT
-// ==========================
-app.delete(
-"/api/admin/contracts/:id",
-verifyAdmin,
-(req,res)=>{
-
-
-const id =
-req.params.id;
-
-
-
-db.get(
-
-`
-
-SELECT *
-
-FROM contracts
-
-WHERE id=?
-
-`,
-
-[id],
-
-
-(err,contract)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-error:"Database error"
-
-});
-
-}
-
-
-
-if(!contract){
-
-return res.status(404).json({
-
-error:"Contract not found"
-
-});
-
-}
-
-
-
-
-
-// DELETE PDF FILE
-
-if(contract.pdfUrl){
-
-const pdfPath =
-path.join(
-
-__dirname,
-
-"public",
-
-contract.pdfUrl
-
-);
-
-
-
-if(fs.existsSync(pdfPath)){
-
-fs.unlinkSync(pdfPath);
-
-}
-
-}
-
-
-
-
-
-// DELETE SIGNATURE FILE
-
-if(contract.signature){
-
-const signaturePath =
-path.join(
-
-__dirname,
-
-"public",
-
-contract.signature
-
-);
-
-
-
-if(fs.existsSync(signaturePath)){
-
-fs.unlinkSync(signaturePath);
-
-}
-
-}
-
-
-
-
-
-// DELETE DATABASE ROW
-
-db.run(
-
-`
-
-DELETE FROM contracts
-
-WHERE id=?
-
-`,
-
-[id],
-
-
-(err)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-error:"Delete failed"
-
-});
-
-}
-
-
-
-res.json({
-
-success:true
-
-});
-
-
-});
-
-
-});
-
-
-});
-
-// 
-
-app.get("/api/test", (req,res)=>{
-  res.json({
-    message:"NEW BACKEND IS WORKING",
-    date:new Date()
-  });
 });
 // 
 

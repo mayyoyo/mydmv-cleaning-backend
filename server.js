@@ -1719,7 +1719,15 @@ success:true
 
 });
 
+// 
 
+app.get("/api/test", (req,res)=>{
+  res.json({
+    message:"NEW BACKEND IS WORKING",
+    date:new Date()
+  });
+});
+// 
 
 
 

@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Book Cleaning Service</title>
+<title>Book Cleaning Service | My DMV Cleaning Services LLC</title>
 
 <link rel="stylesheet" href="./css/booking.css">
 
@@ -34,14 +34,11 @@
 
 <nav class="nav-links" id="navLinks">
 
-<a href="index.html">
-🏠 Home
-</a>
+<a href="index.html">🏠 Home</a>
 
+<a href="booking.html">📅 Booking</a>
 
-<a href="booking.html">
-📅 Booking
-</a>
+<a href="documents.html">📄 Documents</a>
 
 </nav>
 
@@ -49,9 +46,8 @@
 
 
 
-
-
 <main class="booking-page">
+
 
 <section class="booking-card">
 
@@ -126,14 +122,25 @@ Select Time
 
 
 
+<input id="name"
+class="input"
+placeholder="Full Name">
 
-<input id="name" class="input" placeholder="Full Name">
 
-<input id="phone" class="input" placeholder="Phone">
+<input id="phone"
+class="input"
+placeholder="Phone">
 
-<input id="email" class="input" placeholder="Email">
 
-<input id="address" class="input" placeholder="Address">
+<input id="email"
+class="input"
+type="email"
+placeholder="Email">
+
+
+<input id="address"
+class="input"
+placeholder="Address">
 
 
 
@@ -155,94 +162,494 @@ Select Time
 </button>
 
 
-
 </div>
 
 
 </section>
+
 
 </main>
 
 
 
 
-
-
-
 <script>
 
-// ✅ FIXED API URL (Render backend)
-const API = "https://dmv-cleaning-backend.onrender.com";
+
+// ===============================
+// RENDER BACKEND CONNECTION
+// ===============================
+
+const API =
+"https://dmv-cleaning-backend.onrender.com";
+
+
 
 let selectedDate = null;
 
+
+
+// ===============================
+// MOBILE MENU
+// ===============================
+
 function toggleMenu(){
-  document
-    .getElementById("navLinks")
-    .classList.toggle("active");
+
+document
+.getElementById("navLinks")
+.classList.toggle("active");
+
 }
 
-// ================= CALENDAR =================
+
+
+
+// ===============================
+// CALENDAR
+// ===============================
 
 document.addEventListener(
 "DOMContentLoaded",
-async()=>{
+()=>{
 
-  const calendar =
-  new FullCalendar.Calendar(
-    document.getElementById("calendar"),
-    {
-      initialView:"dayGridMonth",
 
-      dateClick: async function(info){
+const calendar =
+new FullCalendar.Calendar(
 
-        selectedDate = info.dateStr;
+document.getElementById("calendar"),
 
-        document.getElementById("selectedDate")
-        .innerText = "Selected: " + selectedDate;
+{
 
-        await loadBookedSlots(selectedDate);
-      }
-    }
-  );
 
-  calendar.render();
+initialView:"dayGridMonth",
+
+
+
+dateClick:async function(info){
+
+
+selectedDate =
+info.dateStr;
+
+
+document.getElementById("selectedDate")
+.innerHTML =
+"Selected Date: " + selectedDate;
+
+
+
+await loadBookedSlots(selectedDate);
+
+
+
+}
+
+
 });
 
-// ================= LOAD BOOKED SLOTS =================
+
+calendar.render();
+
+
+});
+
+
+
+
+
+// ===============================
+// LOAD BOOKED TIMES
+// ===============================
+
 
 async function loadBookedSlots(date){
-  try{
 
-    const res =
-    await fetch(`${API}/api/bookings-by-date/${date}`);
 
-    const booked = await res.json();
+try{
 
-    const select = document.getElementById("timeSlot");
 
-    Array.from(select.options).forEach(opt=>{
-      if(opt.value==="") return;
-      opt.disabled=false;
-      opt.textContent=opt.value;
-    });
+const response =
+await fetch(
+`${API}/api/bookings-by-date/${date}`
+);
 
-    booked.forEach(slot=>{
-      const option =
-      Array.from(select.options)
-      .find(o=>o.value===slot);
 
-      if(option){
-        option.disabled=true;
-        option.textContent = slot + " (Booked)";
-      }
-    });
 
-  } catch(err){
-    console.error("Slot error:", err);
-  }
+if(!response.ok){
+
+throw new Error(
+"Backend route failed"
+);
+
 }
+
+
+
+const booked =
+await response.json();
+
+
+
+const select =
+document.getElementById("timeSlot");
+
+
+
+Array.from(select.options)
+.forEach(option=>{
+
+
+if(option.value==="")
+return;
+
+
+option.disabled=false;
+
+option.textContent=
+option.value;
+
+
+});
+
+
+
+
+booked.forEach(slot=>{
+
+
+const option =
+Array.from(select.options)
+.find(
+item=>item.value===slot
+);
+
+
+
+if(option){
+
+option.disabled=true;
+
+option.textContent =
+slot+" (Booked)";
+
+}
+
+
+});
+
+
+}
+
+catch(error){
+
+
+console.error(
+"Booking slots error:",
+error
+);
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+// ===============================
+// COLLECT DATA
+// ===============================
+
+
+function collectForm(){
+
+
+const service =
+document.getElementById("service");
+
+
+
+const price =
+Number(service.value);
+
+
+
+if(!selectedDate){
+
+throw new Error(
+"Please select a date"
+);
+
+}
+
+
+
+const data={
+
+
+name:
+document.getElementById("name").value.trim(),
+
+
+phone:
+document.getElementById("phone").value.trim(),
+
+
+email:
+document.getElementById("email").value.trim(),
+
+
+address:
+document.getElementById("address").value.trim(),
+
+
+service:
+service.options[service.selectedIndex].text,
+
+
+price:price,
+
+
+date:selectedDate,
+
+
+timeSlot:
+document.getElementById("timeSlot").value
+
+
+};
+
+
+
+if(
+!data.name ||
+!data.email ||
+!data.phone ||
+!data.address ||
+!data.timeSlot ||
+!data.price
+){
+
+throw new Error(
+"Please complete all fields"
+);
+
+}
+
+
+
+return data;
+
+
+}
+
+
+
+
+
+
+// ===============================
+// PAY NOW
+// ===============================
+
+
+async function payNow(){
+
+
+try{
+
+
+const data =
+collectForm();
+
+
+
+data.deposit =
+Math.round(
+data.price * .25 * 100
+)/100;
+
+
+
+data.remaining =
+data.price -
+data.deposit;
+
+
+
+
+const response =
+await fetch(
+
+`${API}/api/create-deposit-checkout`,
+
+{
+
+
+method:"POST",
+
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+
+body:
+JSON.stringify(data)
+
+
+}
+
+);
+
+
+
+const result =
+await response.json();
+
+
+
+if(!response.ok){
+
+throw new Error(
+result.error ||
+"Payment failed"
+);
+
+}
+
+
+
+window.location.href =
+result.url;
+
+
+
+}
+
+catch(error){
+
+
+alert(error.message);
+
+
+console.error(error);
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+// ===============================
+// PAY LATER
+// ===============================
+
+
+async function payLater(){
+
+
+try{
+
+
+const data =
+collectForm();
+
+
+
+data.deposit =
+Math.round(
+data.price * .25 * 100
+)/100;
+
+
+
+data.remaining =
+data.price -
+data.deposit;
+
+
+
+
+const response =
+await fetch(
+
+`${API}/api/book-pay-later`,
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+
+body:
+JSON.stringify(data)
+
+
+}
+
+);
+
+
+
+const result =
+await response.json();
+
+
+
+if(!response.ok){
+
+throw new Error(
+result.error ||
+"Booking failed"
+);
+
+}
+
+
+
+window.location.href =
+"success.html";
+
+
+}
+
+
+catch(error){
+
+
+alert(error.message);
+
+
+console.error(error);
+
+
+}
+
+
+}
+
+
+
 </script>
+
 
 </body>
 

@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,22 +26,13 @@
 
 <nav>
 
-<a href="../index.html">
-🏠 Home
-</a>
-
-<a href="../booking.html">
-📅 Booking
-</a>
-
-<a href="../documents.html">
-📄 Documents
-</a>
+<a href="../index.html">🏠 Home</a>
+<a href="../booking.html">📅 Booking</a>
+<a href="../documents.html">📄 Documents</a>
 
 </nav>
 
 </header>
-
 
 
 
@@ -53,34 +45,24 @@
 
 
 <p class="effective fade">
-
 Please complete the information below to sign your service agreement.
-
 </p>
-
 
 
 
 <div class="sign-box">
 
 
-
-<label>
-Full Name
-</label>
+<label>Full Name *</label>
 
 <input 
-class="input" 
+class="input"
 id="name"
 placeholder="Enter your full name">
 
 
 
-
-
-<label>
-Email
-</label>
+<label>Email *</label>
 
 <input 
 class="input"
@@ -90,62 +72,45 @@ placeholder="Enter your email">
 
 
 
+<label>Phone Number</label>
 
-
-<label>
-Phone Number
-</label>
-
-<input
+<input 
 class="input"
 id="phone"
 placeholder="Enter your phone number">
 
 
 
-
-
-<label>
-Contract Type
-</label>
-
+<label>Contract Type</label>
 
 <select 
 class="input"
 id="contractType">
 
-
 <option value="Service Agreement">
 Service Agreement
 </option>
-
 
 <option value="Client Contract">
 Client Contract
 </option>
 
-
 <option value="Contractor Agreement">
 Contractor Agreement
 </option>
-
 
 </select>
 
 
 
 
-
-
-<label>
-Typed Signature
-</label>
+<label>Typed Signature *</label>
 
 
 <input
 class="input"
 id="typedName"
-placeholder="Type Your Name as Signature">
+placeholder="Type your name as signature">
 
 
 
@@ -164,12 +129,11 @@ height="150">
 
 
 
-
-
 <div class="buttons">
 
 
 <button 
+type="button"
 class="legal-btn clear"
 onclick="clearCanvas()">
 
@@ -179,8 +143,8 @@ onclick="clearCanvas()">
 
 
 
-
 <button 
+type="button"
 class="legal-btn"
 onclick="submitContract()">
 
@@ -193,15 +157,12 @@ onclick="submitContract()">
 
 
 
-
 <div id="msg"></div>
 
 
 </div>
 
-
 </div>
-
 
 
 
@@ -264,27 +225,99 @@ canvas.getContext("2d");
 let drawing = false;
 
 
+ctx.lineWidth = 2;
+ctx.lineCap = "round";
 
-canvas.addEventListener(
-"mousedown",
-()=>{
+
+
+function getPosition(e){
+
+const rect =
+canvas.getBoundingClientRect();
+
+
+if(e.touches){
+
+return {
+
+x:e.touches[0].clientX - rect.left,
+
+y:e.touches[0].clientY - rect.top
+
+};
+
+}
+
+
+return {
+
+x:e.clientX - rect.left,
+
+y:e.clientY - rect.top
+
+};
+
+
+}
+
+
+
+
+function startDrawing(e){
 
 drawing=true;
 
-});
+const pos=getPosition(e);
+
+ctx.beginPath();
+
+ctx.moveTo(pos.x,pos.y);
+
+}
 
 
 
-canvas.addEventListener(
-"mouseup",
-()=>{
+
+function draw(e){
+
+if(!drawing)
+return;
+
+
+e.preventDefault();
+
+
+const pos=getPosition(e);
+
+
+ctx.lineTo(
+pos.x,
+pos.y
+);
+
+
+ctx.stroke();
+
+
+}
+
+
+
+function stopDrawing(){
 
 drawing=false;
 
 ctx.beginPath();
 
-});
+}
 
+
+
+
+canvas.addEventListener(
+"mousedown",
+startDrawing
+);
 
 
 canvas.addEventListener(
@@ -293,75 +326,52 @@ draw
 );
 
 
-
-function draw(e){
-
-
-if(!drawing)
-return;
-
-
-const rect =
-canvas.getBoundingClientRect();
-
-
-ctx.lineWidth = 2;
-
-ctx.lineCap = "round";
-
-
-ctx.lineTo(
-
-e.clientX - rect.left,
-
-e.clientY - rect.top
-
+canvas.addEventListener(
+"mouseup",
+stopDrawing
 );
 
 
-ctx.stroke();
-
-
-ctx.beginPath();
-
-
-ctx.moveTo(
-
-e.clientX - rect.left,
-
-e.clientY - rect.top
-
+canvas.addEventListener(
+"mouseleave",
+stopDrawing
 );
 
 
-}
+
+// Mobile
+
+canvas.addEventListener(
+"touchstart",
+startDrawing
+);
+
+
+canvas.addEventListener(
+"touchmove",
+draw
+);
+
+
+canvas.addEventListener(
+"touchend",
+stopDrawing
+);
 
 
 
 
-
-// ==========================
-// CLEAR SIGNATURE
-// ==========================
 
 function clearCanvas(){
 
-
 ctx.clearRect(
-
 0,
-
 0,
-
 canvas.width,
-
 canvas.height
-
 );
 
-
 }
-
 
 
 
@@ -373,12 +383,20 @@ canvas.height
 async function submitContract(){
 
 
+
 const API_URL =
+
 window.location.hostname === "localhost"
 
-? "http://localhost:5000"
+?
 
-: "https://dmv-cleaning-backend.onrender.com";
+"http://localhost:5000"
+
+:
+
+"https://dmv-cleaning-backend.onrender.com";
+
+
 
 
 
@@ -386,23 +404,37 @@ const data = {
 
 
 name:
-document.getElementById("name").value.trim(),
+document.getElementById("name")
+.value
+.trim(),
+
 
 
 email:
-document.getElementById("email").value.trim(),
+document.getElementById("email")
+.value
+.trim(),
+
 
 
 phone:
-document.getElementById("phone").value.trim(),
+document.getElementById("phone")
+.value
+.trim(),
+
 
 
 typedName:
-document.getElementById("typedName").value.trim(),
+document.getElementById("typedName")
+.value
+.trim(),
+
 
 
 contractType:
-document.getElementById("contractType").value,
+document.getElementById("contractType")
+.value,
+
 
 
 signature:
@@ -414,15 +446,24 @@ canvas.toDataURL("image/png")
 
 
 
+
 if(
 !data.name ||
 !data.email ||
 !data.typedName
 ){
 
-alert(
-"Please complete required fields"
-);
+document.getElementById("msg").innerHTML =
+
+`
+
+<p style="color:red">
+
+❌ Please complete required fields.
+
+</p>
+
+`;
 
 return;
 
@@ -430,11 +471,30 @@ return;
 
 
 
+
+
 try{
 
 
-const res =
-await fetch(
+
+document.getElementById("msg").innerHTML =
+
+`
+
+<p>
+
+⏳ Sending contract...
+
+</p>
+
+`;
+
+
+
+
+
+
+const res = await fetch(
 
 `${API_URL}/api/contracts/sign`,
 
@@ -446,15 +506,12 @@ method:"POST",
 
 headers:{
 
-
 "Content-Type":"application/json"
 
 },
 
 
-
-body:
-JSON.stringify(data)
+body:JSON.stringify(data)
 
 
 }
@@ -463,13 +520,17 @@ JSON.stringify(data)
 
 
 
+
+
+
 const result =
 await res.json();
 
 
 
+
 console.log(
-"CONTRACT RESPONSE:",
+"BACKEND RESPONSE:",
 result
 );
 
@@ -477,18 +538,19 @@ result
 
 
 
-if(result.success){
+
+if(result.success && result.contract){
+
 
 
 document.getElementById("msg").innerHTML =
 
-
 `
 
-<div style="margin-top:25px;">
+<div style="margin-top:25px">
 
 
-<h3 style="color:green;">
+<h3 style="color:green">
 
 ✅ Contract signed successfully!
 
@@ -496,7 +558,7 @@ document.getElementById("msg").innerHTML =
 
 
 
-<a
+<a 
 
 href="${result.contract}"
 
@@ -522,10 +584,11 @@ font-size:18px;
 
 ">
 
+
 📄 Download Signed Contract PDF
 
-</a>
 
+</a>
 
 
 </div>
@@ -541,29 +604,30 @@ else{
 
 document.getElementById("msg").innerHTML =
 
-
 `
 
 <p style="color:red">
 
-${result.error || "Contract signing failed"}
+❌ ${result.error || "Contract failed"}
 
 </p>
 
 `;
 
-
-
 }
 
 
 
 }
 
-catch(err){
+catch(error){
 
 
-console.log(err);
+console.error(
+"CONTRACT ERROR:",
+error
+);
+
 
 
 document.getElementById("msg").innerHTML =
@@ -573,12 +637,11 @@ document.getElementById("msg").innerHTML =
 
 <p style="color:red">
 
-Server connection failed.
+❌ Connection failed. Check backend.
 
 </p>
 
 `;
-
 
 }
 
@@ -591,6 +654,8 @@ Server connection failed.
 </script>
 
 
+
 </body>
 
 </html>
+```

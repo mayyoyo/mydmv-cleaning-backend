@@ -1,9 +1,15 @@
 // ==========================
 // LOAD ENV
 // ==========================
-require("dotenv").config();
+ require("dotenv").config();
+// const PORT = process.env.PORT || 5000;
 
+const PORT = process.env.PORT || 5000;
 
+const FRONTEND_URL =
+  process.env.FRONTEND_URL ||
+  "https://mydmvcleaningservice.com";
+  // 
 // ==========================
 // IMPORTS
 // ==========================
@@ -19,16 +25,22 @@ const nodemailer = require("nodemailer");
 
 
 // ==========================
-// APP CONFIG
+// APP INIT (🚨 MUST COME FIRST)
 // ==========================
 const app = express();
 
-const PORT = process.env.PORT || 5000;
 
-const FRONTEND_URL =
-process.env.FRONTEND_URL ||
-"http://localhost:5000";
-
+// ==========================
+// CORS (🚨 PUT HERE)
+// ==========================
+app.use(cors({
+  origin: [
+    "http://localhost:5000",
+    "https://mydmvcleaningservice.com"
+  ],
+  methods: ["GET","POST","PUT","DELETE"],
+  allowedHeaders: ["Content-Type","Authorization"]
+}));
 
 // ==========================
 // STRIPE
@@ -41,7 +53,7 @@ process.env.STRIPE_SECRET_KEY
 // ==========================
 // MIDDLEWARE
 // ==========================
-app.use(cors());
+// app.use(cors());
 
 app.use(
 express.json({

@@ -1411,7 +1411,14 @@ error:"Server error"
 });
 // 
 
-
+app.get("/api/test",(req,res)=>{
+  res.json({
+    success:true,
+    message:"BACKEND UPDATED",
+    date:new Date()
+  });
+});
+// 
 
 // ==========================
 // SERVER START

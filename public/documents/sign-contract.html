@@ -16,8 +16,6 @@
 <body>
 
 
-<!-- ================= NAVBAR ================= -->
-
 <header class="legal-nav">
 
 <div class="logo">
@@ -46,9 +44,6 @@
 
 
 
-
-<!-- ================= SIGN PAGE ================= -->
-
 <div class="container">
 
 
@@ -66,7 +61,6 @@ Please complete the information below to sign your service agreement.
 
 
 
-
 <div class="sign-box">
 
 
@@ -74,7 +68,6 @@ Please complete the information below to sign your service agreement.
 <label>
 Full Name
 </label>
-
 
 <input 
 class="input" 
@@ -89,7 +82,6 @@ placeholder="Enter your full name">
 Email
 </label>
 
-
 <input 
 class="input"
 id="email"
@@ -100,17 +92,14 @@ placeholder="Enter your email">
 
 
 
-
 <label>
 Phone Number
 </label>
-
 
 <input
 class="input"
 id="phone"
 placeholder="Enter your phone number">
-
 
 
 
@@ -148,8 +137,6 @@ Contractor Agreement
 
 
 
-
-
 <label>
 Typed Signature
 </label>
@@ -164,12 +151,9 @@ placeholder="Type Your Name as Signature">
 
 
 
-
-
 <h3>
 ✍️ Draw Signature
 </h3>
-
 
 
 <canvas 
@@ -182,9 +166,7 @@ height="150">
 
 
 
-
 <div class="buttons">
-
 
 
 <button 
@@ -198,7 +180,6 @@ onclick="clearCanvas()">
 
 
 
-
 <button 
 class="legal-btn"
 onclick="submitContract()">
@@ -208,10 +189,7 @@ onclick="submitContract()">
 </button>
 
 
-
 </div>
-
-
 
 
 
@@ -219,9 +197,6 @@ onclick="submitContract()">
 <div id="msg"></div>
 
 
-
-
-
 </div>
 
 
@@ -229,13 +204,6 @@ onclick="submitContract()">
 
 
 
-
-
-
-
-
-
-<!-- ================= FOOTER ================= -->
 
 
 <footer class="legal-footer">
@@ -271,11 +239,7 @@ onclick="submitContract()">
 </a>
 
 
-
 </footer>
-
-
-
 
 
 
@@ -289,7 +253,6 @@ onclick="submitContract()">
 // SIGNATURE CANVAS
 // ==========================
 
-
 const canvas =
 document.getElementById("canvas");
 
@@ -298,9 +261,7 @@ const ctx =
 canvas.getContext("2d");
 
 
-
-let drawing=false;
-
+let drawing = false;
 
 
 
@@ -333,7 +294,6 @@ draw
 
 
 
-
 function draw(e){
 
 
@@ -341,16 +301,13 @@ if(!drawing)
 return;
 
 
-
 const rect =
 canvas.getBoundingClientRect();
 
 
+ctx.lineWidth = 2;
 
-ctx.lineWidth=2;
-
-ctx.lineCap="round";
-
+ctx.lineCap = "round";
 
 
 ctx.lineTo(
@@ -362,13 +319,10 @@ e.clientY - rect.top
 );
 
 
-
 ctx.stroke();
 
 
-
 ctx.beginPath();
-
 
 
 ctx.moveTo(
@@ -380,19 +334,15 @@ e.clientY - rect.top
 );
 
 
-
 }
 
 
 
 
 
-
-
 // ==========================
-// CLEAR CANVAS
+// CLEAR SIGNATURE
 // ==========================
-
 
 function clearCanvas(){
 
@@ -416,16 +366,19 @@ canvas.height
 
 
 
-
-
-
-
 // ==========================
 // SUBMIT CONTRACT
 // ==========================
 
-
 async function submitContract(){
+
+
+const API_URL =
+window.location.hostname === "localhost"
+
+? "http://localhost:5000"
+
+: "https://dmv-cleaning-backend.onrender.com";
 
 
 
@@ -433,54 +386,27 @@ const data = {
 
 
 name:
-
-document
-.getElementById("name")
-.value.trim(),
-
+document.getElementById("name").value.trim(),
 
 
 email:
-
-document
-.getElementById("email")
-.value.trim(),
-
-
+document.getElementById("email").value.trim(),
 
 
 phone:
-
-document
-.getElementById("phone")
-.value.trim(),
-
-
+document.getElementById("phone").value.trim(),
 
 
 typedName:
-
-document
-.getElementById("typedName")
-.value.trim(),
-
-
+document.getElementById("typedName").value.trim(),
 
 
 contractType:
-
-document
-.getElementById("contractType")
-.value,
-
-
+document.getElementById("contractType").value,
 
 
 signature:
-
-canvas.toDataURL(
-"image/png"
-)
+canvas.toDataURL("image/png")
 
 
 };
@@ -488,44 +414,29 @@ canvas.toDataURL(
 
 
 
-
-
 if(
-
 !data.name ||
-
 !data.email ||
-
 !data.typedName
-
 ){
-
 
 alert(
 "Please complete required fields"
 );
 
-
 return;
 
-
 }
-
-
-
-
-
 
 
 
 try{
 
 
-
 const res =
 await fetch(
 
-"http://localhost:5000/api/contracts/sign",
+`${API_URL}/api/contracts/sign`,
 
 {
 
@@ -536,19 +447,14 @@ method:"POST",
 headers:{
 
 
-"Content-Type":
-
-"application/json"
-
+"Content-Type":"application/json"
 
 },
 
 
 
 body:
-
 JSON.stringify(data)
-
 
 
 }
@@ -557,12 +463,15 @@ JSON.stringify(data)
 
 
 
-
-
 const result =
 await res.json();
 
 
+
+console.log(
+"CONTRACT RESPONSE:",
+result
+);
 
 
 
@@ -571,9 +480,7 @@ await res.json();
 if(result.success){
 
 
-
 document.getElementById("msg").innerHTML =
-
 
 
 `
@@ -627,8 +534,6 @@ font-size:18px;
 
 
 
-
-
 }
 
 else{
@@ -658,9 +563,7 @@ ${result.error || "Contract signing failed"}
 catch(err){
 
 
-
 console.log(err);
-
 
 
 document.getElementById("msg").innerHTML =
@@ -670,12 +573,11 @@ document.getElementById("msg").innerHTML =
 
 <p style="color:red">
 
-Server error. Please try again.
+Server connection failed.
 
 </p>
 
 `;
-
 
 
 }
@@ -687,7 +589,6 @@ Server error. Please try again.
 
 
 </script>
-
 
 
 </body>

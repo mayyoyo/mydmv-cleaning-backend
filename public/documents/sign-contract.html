@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,12 +26,15 @@
 <nav>
 
 <a href="../index.html">🏠 Home</a>
+
 <a href="../booking.html">📅 Booking</a>
+
 <a href="../documents.html">📄 Documents</a>
 
 </nav>
 
 </header>
+
 
 
 
@@ -47,6 +49,7 @@
 <p class="effective fade">
 Please complete the information below to sign your service agreement.
 </p>
+
 
 
 
@@ -83,9 +86,7 @@ placeholder="Enter your phone number">
 
 <label>Contract Type</label>
 
-<select 
-class="input"
-id="contractType">
+<select class="input" id="contractType">
 
 <option value="Service Agreement">
 Service Agreement
@@ -106,13 +107,10 @@ Contractor Agreement
 
 <label>Typed Signature *</label>
 
-
-<input
+<input 
 class="input"
 id="typedName"
 placeholder="Type your name as signature">
-
-
 
 
 
@@ -130,7 +128,6 @@ height="150">
 
 
 <div class="buttons">
-
 
 <button 
 type="button"
@@ -167,33 +164,28 @@ onclick="submitContract()">
 
 
 
-<footer class="legal-footer">
 
+<footer class="legal-footer">
 
 <a href="../legal/privacy.html">
 🔒 Privacy
 </a>
 
-
 <a href="../legal/terms.html">
 📜 Terms
 </a>
-
 
 <a href="../legal/refund.html">
 💰 Refund
 </a>
 
-
 <a href="client-contract.html">
 📄 Client Contract
 </a>
 
-
 <a href="contractor-agreement.html">
 👷 Contractor Agreement
 </a>
-
 
 <a href="../documents.html">
 📄 Documents
@@ -206,13 +198,29 @@ onclick="submitContract()">
 
 
 
-
 <script>
 
 
-// ==========================
-// SIGNATURE CANVAS
-// ==========================
+// ================= BACKEND API =================
+
+
+const API =
+
+window.location.hostname === "localhost"
+
+?
+
+"http://localhost:5000"
+
+:
+
+"https://dmv-cleaning-backend.onrender.com";
+
+
+
+
+// ================= CANVAS SIGNATURE =================
+
 
 const canvas =
 document.getElementById("canvas");
@@ -222,10 +230,11 @@ const ctx =
 canvas.getContext("2d");
 
 
-let drawing = false;
+let drawing=false;
 
 
 ctx.lineWidth = 2;
+
 ctx.lineCap = "round";
 
 
@@ -257,9 +266,7 @@ y:e.clientY - rect.top
 
 };
 
-
 }
-
 
 
 
@@ -271,10 +278,12 @@ const pos=getPosition(e);
 
 ctx.beginPath();
 
-ctx.moveTo(pos.x,pos.y);
+ctx.moveTo(
+pos.x,
+pos.y
+);
 
 }
-
 
 
 
@@ -298,7 +307,6 @@ pos.y
 
 ctx.stroke();
 
-
 }
 
 
@@ -310,7 +318,6 @@ drawing=false;
 ctx.beginPath();
 
 }
-
 
 
 
@@ -338,8 +345,6 @@ stopDrawing
 );
 
 
-
-// Mobile
 
 canvas.addEventListener(
 "touchstart",
@@ -376,29 +381,19 @@ canvas.height
 
 
 
-// ==========================
-// SUBMIT CONTRACT
-// ==========================
 
-// ==========================
-// SUBMIT CONTRACT
-// ==========================
+// ================= SUBMIT CONTRACT =================
+
 
 async function submitContract(){
 
 
-const API_URL =
 
-window.location.hostname === "localhost"
-
-?
-
-"http://localhost:5000"
-
-:
-
-"https://dmv-cleaning-backend.onrender.com";
-
+const type =
+new URLSearchParams(
+window.location.search
+)
+.get("type");
 
 
 
@@ -406,35 +401,53 @@ const data = {
 
 
 name:
-document.getElementById("name")
+
+document
+.getElementById("name")
 .value
 .trim(),
+
 
 
 email:
-document.getElementById("email")
+
+document
+.getElementById("email")
 .value
 .trim(),
+
 
 
 phone:
-document.getElementById("phone")
+
+document
+.getElementById("phone")
 .value
 .trim(),
+
 
 
 typedName:
-document.getElementById("typedName")
+
+document
+.getElementById("typedName")
 .value
 .trim(),
 
 
+
 contractType:
-document.getElementById("contractType")
+
+type ||
+
+document
+.getElementById("contractType")
 .value,
 
 
+
 signature:
+
 canvas.toDataURL("image/png")
 
 
@@ -454,9 +467,7 @@ document.getElementById("msg").innerHTML =
 
 `
 <p style="color:red">
-
 ❌ Please complete required fields.
-
 </p>
 `;
 
@@ -475,17 +486,16 @@ document.getElementById("msg").innerHTML =
 
 `
 <p>
-⏳ Sending contract...
+⏳ Creating contract PDF...
 </p>
 `;
 
 
 
 
-
 const res = await fetch(
 
-`${API_URL}/api/sign-contract`,
+`${API}/api/sign-contract`,
 
 {
 
@@ -497,9 +507,7 @@ headers:{
 
 },
 
-body:
-
-JSON.stringify(data)
+body:JSON.stringify(data)
 
 }
 
@@ -509,26 +517,71 @@ JSON.stringify(data)
 
 
 
-const result = await res.json();
+const text =
+await res.text();
+
 
 
 console.log(
-"BACKEND RESPONSE:",
-result
+"SERVER RESPONSE:",
+text
 );
 
 
 
+let result;
 
 
-if(result.success && result.contract){
+try{
+
+result =
+JSON.parse(text);
+
+}
+
+catch{
+
+throw new Error(
+"Server returned invalid response"
+);
+
+}
+
+
+
+
+
+if(
+result.success &&
+result.pdf
+){
+
+
+
+let pdfURL =
+result.pdf;
+
+
+
+if(
+!pdfURL.startsWith("http")
+){
+
+pdfURL =
+API + pdfURL;
+
+}
+
+
 
 
 document.getElementById("msg").innerHTML =
 
+
 `
 
 <div style="margin-top:25px">
+
 
 <h3 style="color:green">
 
@@ -537,35 +590,26 @@ document.getElementById("msg").innerHTML =
 </h3>
 
 
-<a
 
-href="${result.contract}"
+<a href="${pdfURL}"
 
 target="_blank"
 
 style="
-
 display:inline-block;
-
 margin-top:15px;
-
 padding:12px 20px;
-
 background:#007bff;
-
 color:white;
-
 border-radius:8px;
-
 text-decoration:none;
-
 font-size:18px;
-
 ">
 
-📄 Download Signed Contract PDF
+📄 Open Signed Contract PDF
 
 </a>
+
 
 </div>
 
@@ -578,19 +622,13 @@ font-size:18px;
 else{
 
 
-document.getElementById("msg").innerHTML =
+throw new Error(
+result.error || "Contract failed"
+);
 
-`
-
-<p style="color:red">
-
-❌ ${result.error || "Contract failed"}
-
-</p>
-
-`;
 
 }
+
 
 
 
@@ -612,23 +650,25 @@ document.getElementById("msg").innerHTML =
 
 <p style="color:red">
 
-❌ Connection failed. Check backend.
+❌ ${error.message}
 
 </p>
 
 `;
 
-}
 
 
 }
+
+
+
+}
+
 
 
 </script>
 
 
-
 </body>
 
 </html>
-```

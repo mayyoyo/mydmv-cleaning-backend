@@ -4,16 +4,22 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Login | My DMV Cleaning Services</title>
+<title>
+Admin Login | My DMV Cleaning Services
+</title>
+
 
 <link rel="stylesheet" href="../css/admin-login.css">
+
 
 </head>
 
 
 <body>
+
 
 
 <div class="login-wrapper">
@@ -28,24 +34,49 @@
 
 
 
-<input 
-id="username" 
+<form id="loginForm">
+
+
+<input
+
+id="username"
+
 placeholder="Username"
-autocomplete="username">
+
+autocomplete="username"
+
+required
+
+>
 
 
 
-<input 
-id="password" 
-type="password" 
+
+<input
+
+id="password"
+
+type="password"
+
 placeholder="Password"
-autocomplete="current-password">
+
+autocomplete="current-password"
+
+required
+
+>
 
 
 
-<button onclick="login()">
+<button type="submit">
+
 Login
+
 </button>
+
+
+
+</form>
 
 
 
@@ -62,105 +93,105 @@ Login
 
 
 
-
 <script>
 
 
-// ================= API =================
+const API =
 
-const API = "http://localhost:5000";
+window.location.hostname === "localhost"
+
+?
+
+"http://localhost:5000"
+
+:
+
+"https://dmv-cleaning-backend.onrender.com";
 
 
 
 
-// ================= LOGIN =================
 
-async function login(){
+document
+
+.getElementById("loginForm")
+
+.addEventListener(
+
+"submit",
+
+async(e)=>{
+
+
+e.preventDefault();
+
 
 
 
 const username =
+
 document
+
 .getElementById("username")
-.value
-.trim();
+
+.value.trim();
 
 
 
 const password =
+
 document
+
 .getElementById("password")
-.value
-.trim();
+
+.value.trim();
 
 
 
 const msg =
+
 document.getElementById("msg");
 
 
 
 
-if(!username || !password){
-
-
-msg.innerText =
-"Please enter username and password";
-
-
-return;
-
-
-}
-
-
-
-msg.innerText =
+msg.innerHTML =
 "Logging in...";
-
-
 
 
 
 try{
 
 
-
 const res =
+
 await fetch(
 
-API + "/api/admin/login",
+`${API}/api/admin/login`,
 
 {
 
-
 method:"POST",
-
 
 headers:{
 
-
 "Content-Type":
-"application/json"
 
+"application/json"
 
 },
 
-
 body:JSON.stringify({
 
-username:username,
+username,
 
-password:password
+password
 
 })
-
 
 }
 
 );
-
-
 
 
 
@@ -170,17 +201,12 @@ await res.json();
 
 
 
-console.log(
-"Login response:",
-data
-);
 
+if(
 
+data.success
 
-
-
-if(data.success && data.token){
-
+){
 
 
 localStorage.setItem(
@@ -193,12 +219,8 @@ data.token
 
 
 
-
-
-msg.innerText =
-"Login successful ✅";
-
-
+msg.innerHTML =
+"✅ Login successful";
 
 
 
@@ -206,11 +228,10 @@ setTimeout(()=>{
 
 
 window.location.href =
-"/admin/dashboard.html";
+"dashboard.html";
 
 
-},800);
-
+},700);
 
 
 
@@ -219,9 +240,8 @@ window.location.href =
 else{
 
 
-
-msg.innerText =
-data.error || "Invalid login ❌";
+msg.innerHTML =
+"❌ Invalid login";
 
 
 }
@@ -233,47 +253,21 @@ data.error || "Invalid login ❌";
 catch(error){
 
 
+console.log(error);
 
-console.error(
-"Login error:",
-error
+
+msg.innerHTML =
+"❌ Server connection failed";
+
+
+}
+
+
+
+}
+
+
 );
-
-
-
-msg.innerText =
-"Server connection error ❌";
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-// ================= ENTER KEY =================
-
-
-document.addEventListener(
-"keydown",
-(e)=>{
-
-
-if(e.key==="Enter"){
-
-
-login();
-
-
-}
-
-
-});
 
 
 

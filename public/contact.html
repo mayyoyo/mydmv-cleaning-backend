@@ -4,11 +4,17 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Contact Us | My DMV Cleaning Services LLC</title>
+
+<title>
+Contact Us | My DMV Cleaning Services LLC
+</title>
+
 
 <link rel="stylesheet" href="./css/style.css">
+
 
 </head>
 
@@ -16,12 +22,66 @@
 <body>
 
 
-<div class="container">
+<header class="navbar">
+
+
+<div class="logo">
+
+🧼 My DMV Cleaning Services LLC
+
+</div>
+
+
+
+<div class="hamburger" onclick="toggleMenu()">
+
+☰
+
+</div>
+
+
+
+
+<nav class="nav-links" id="navLinks">
+
+
+<a href="index.html">
+🏠 Home
+</a>
+
+
+<a href="booking.html">
+📅 Booking
+</a>
+
+
+<a href="documents.html">
+📄 Documents
+</a>
+
+
+<a href="contact.html" class="active">
+📞 Contact
+</a>
+
+
+
+</nav>
+
+
+</header>
+
+
+
+
+
+<main class="container">
 
 
 <h1>
 📞 Contact My DMV Cleaning Services LLC
 </h1>
+
 
 
 <p>
@@ -34,30 +94,33 @@ Have questions? Send us a message and we will get back to you.
 <form id="contactForm">
 
 
+
 <label>
-Name
+Name *
 </label>
 
-<input 
+
+<input
 type="text"
 id="name"
+placeholder="Your full name"
 required
-placeholder="Your name">
-
+>
 
 
 
 
 <label>
-Email
+Email *
 </label>
 
-<input 
+
+<input
 type="email"
 id="email"
+placeholder="Your email"
 required
-placeholder="Your email">
-
+>
 
 
 
@@ -66,31 +129,33 @@ placeholder="Your email">
 Phone
 </label>
 
-<input 
+
+<input
 type="text"
 id="phone"
-placeholder="Your phone number">
-
+placeholder="Your phone number"
+>
 
 
 
 
 <label>
-Message
+Message *
 </label>
 
 
 <textarea
 id="message"
-rows="5"
-required
-placeholder="Write your message">
+rows="6"
+placeholder="Write your message"
+required>
 </textarea>
 
 
 
 
-<button type="submit">
+
+<button type="submit" class="btn">
 
 📩 Send Message
 
@@ -98,15 +163,36 @@ placeholder="Write your message">
 
 
 
+
 <p id="result"></p>
+
 
 
 
 </form>
 
 
+</main>
 
-</div>
+
+
+
+
+
+
+<footer class="footer">
+
+
+<p>
+
+© 2026 My DMV Cleaning Services LLC
+
+</p>
+
+
+</footer>
+
+
 
 
 
@@ -115,9 +201,39 @@ placeholder="Write your message">
 <script>
 
 
-const API =
-"http://localhost:5000";
+// ================= API =================
 
+const API =
+
+window.location.hostname === "localhost"
+
+?
+
+"http://localhost:5000"
+
+:
+
+"https://dmv-cleaning-backend.onrender.com";
+
+
+
+
+// ================= MOBILE MENU =================
+
+
+function toggleMenu(){
+
+document
+.getElementById("navLinks")
+.classList
+.toggle("active");
+
+}
+
+
+
+
+// ================= CONTACT FORM =================
 
 
 document
@@ -131,26 +247,61 @@ e.preventDefault();
 
 
 
+const result =
+document.getElementById("result");
+
+
+
 const data = {
 
 
 name:
-document.getElementById("name").value,
+document.getElementById("name")
+.value
+.trim(),
 
 
 email:
-document.getElementById("email").value,
+document.getElementById("email")
+.value
+.trim(),
 
 
 phone:
-document.getElementById("phone").value,
+document.getElementById("phone")
+.value
+.trim(),
 
 
 message:
-document.getElementById("message").value
+document.getElementById("message")
+.value
+.trim()
 
 
 };
+
+
+
+
+if(
+!data.name ||
+!data.email ||
+!data.message
+){
+
+result.innerHTML =
+"❌ Please complete required fields.";
+
+return;
+
+}
+
+
+
+
+result.innerHTML =
+"⏳ Sending message...";
 
 
 
@@ -161,7 +312,7 @@ try{
 const res =
 await fetch(
 
-API + "/api/contact",
+`${API}/api/contact`,
 
 {
 
@@ -171,39 +322,36 @@ method:"POST",
 
 headers:{
 
-
-"Content-Type":
-"application/json"
-
+"Content-Type":"application/json"
 
 },
 
 
 body:
+
 JSON.stringify(data)
 
 
 }
-
 
 );
 
 
 
 
-
-const result =
+const response =
 await res.json();
 
 
 
 
-if(result.success){
+
+if(response.success){
 
 
-document.getElementById("result").innerHTML =
+result.innerHTML =
+"✅ Message sent successfully! We will contact you soon.";
 
-"✅ Message sent successfully!";
 
 
 document
@@ -216,26 +364,28 @@ document
 else{
 
 
-document.getElementById("result").innerHTML =
-
-"❌ Message failed";
-
-
-}
-
+result.innerHTML =
+"❌ " + (response.error || "Message failed");
 
 
 }
 
-catch(err){
 
 
-console.log(err);
+}
+
+catch(error){
 
 
-document.getElementById("result").innerHTML =
+console.error(
+"CONTACT ERROR:",
+error
+);
 
-"❌ Server error";
+
+
+result.innerHTML =
+"❌ Server connection failed.";
 
 
 }
@@ -243,6 +393,7 @@ document.getElementById("result").innerHTML =
 
 
 });
+
 
 
 </script>

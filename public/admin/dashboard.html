@@ -6,19 +6,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Dashboard | My DMV Cleaning Services</title>
+<title>
+Admin Dashboard | My DMV Cleaning Services
+</title>
+
 
 <link rel="stylesheet" href="../css/dashboard.css">
 
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
 
 if(!localStorage.getItem("adminToken")){
-    window.location.href="login.html";
+
+window.location.href="login.html";
+
 }
 
 </script>
+
 
 </head>
 
@@ -26,7 +31,7 @@ if(!localStorage.getItem("adminToken")){
 <body>
 
 
-<!-- ================= SIDEBAR ================= -->
+<!-- SIDEBAR -->
 
 <div class="sidebar">
 
@@ -69,8 +74,7 @@ if(!localStorage.getItem("adminToken")){
 
 
 
-<!-- ================= MAIN ================= -->
-
+<!-- MAIN -->
 
 <div class="main">
 
@@ -82,36 +86,71 @@ if(!localStorage.getItem("adminToken")){
 
 
 
-<!-- ================= CARDS ================= -->
 
+<!-- CARDS -->
 
 <div class="cards">
 
 
 <div class="card">
-<h3>Total Bookings</h3>
-<p id="total">0</p>
+
+<h3>
+Total
+</h3>
+
+<p id="total">
+0
+</p>
+
 </div>
+
+
 
 
 <div class="card">
-<h3>Paid</h3>
-<p id="paid">0</p>
+
+<h3>
+Paid
+</h3>
+
+<p id="paid">
+0
+</p>
+
 </div>
+
+
 
 
 <div class="card">
-<h3>Pending</h3>
-<p id="pending">0</p>
+
+<h3>
+Pending
+</h3>
+
+<p id="pending">
+0
+</p>
+
 </div>
+
+
 
 
 <div class="card">
-<h3>Cancelled</h3>
-<p id="cancelled">0</p>
+
+<h3>
+Cancelled
+</h3>
+
+<p id="cancelled">
+0
+</p>
+
 </div>
 
 
+
 </div>
 
 
@@ -120,8 +159,7 @@ if(!localStorage.getItem("adminToken")){
 
 
 
-<!-- ================= BOOKINGS ================= -->
-
+<!-- BOOKINGS -->
 
 <h2>
 📅 Customer Bookings
@@ -136,15 +174,23 @@ if(!localStorage.getItem("adminToken")){
 <tr>
 
 <th>Name</th>
+
 <th>Email</th>
+
 <th>Phone</th>
+
 <th>Service</th>
+
 <th>Date</th>
+
 <th>Time</th>
+
 <th>Total</th>
+
 <th>Deposit</th>
-<th>Payment</th>
+
 <th>Status</th>
+
 <th>Actions</th>
 
 
@@ -156,11 +202,15 @@ if(!localStorage.getItem("adminToken")){
 
 <tbody id="table-body">
 
+
 <tr>
-<td colspan="11">
-Loading bookings...
+
+<td colspan="10">
+Loading...
 </td>
+
 </tr>
+
 
 </tbody>
 
@@ -173,8 +223,7 @@ Loading bookings...
 
 
 
-
-<!-- ================= CONTRACTS ================= -->
+<!-- CONTRACTS -->
 
 
 <section id="documents-section">
@@ -186,16 +235,21 @@ Loading bookings...
 
 
 
-<input 
+<input
+
 id="searchContracts"
-type="text"
-placeholder="🔍 Search contracts..."
+
+placeholder="Search contracts..."
+
 onkeyup="filterContracts()"
+
 >
 
 
 <button onclick="downloadAllPDFs()">
+
 📥 Download All PDFs
+
 </button>
 
 
@@ -206,14 +260,20 @@ onkeyup="filterContracts()"
 
 <thead>
 
+
 <tr>
 
+
 <th>Name</th>
+
 <th>Email</th>
-<th>Contract Type</th>
+
+<th>Type</th>
+
 <th>Date</th>
-<th>Signature</th>
+
 <th>PDF</th>
+
 <th>Delete</th>
 
 
@@ -226,11 +286,6 @@ onkeyup="filterContracts()"
 
 <tbody id="contracts-body">
 
-<tr>
-<td colspan="7">
-Loading contracts...
-</td>
-</tr>
 
 </tbody>
 
@@ -238,7 +293,9 @@ Loading contracts...
 </table>
 
 
+
 </section>
+
 
 
 
@@ -254,11 +311,24 @@ Loading contracts...
 <script>
 
 
+// ================= API =================
+
+
 const API =
-"http://localhost:5000";
+
+window.location.hostname === "localhost"
+
+?
+
+"http://localhost:5000"
+
+:
+
+"https://dmv-cleaning-backend.onrender.com";
 
 
-let allContracts = [];
+
+let allContracts=[];
 
 
 
@@ -281,22 +351,61 @@ window.location.href="login.html";
 
 
 
+// ================= AUTH FETCH =================
 
 
-// ================= SOCKET =================
+async function fetchWithAuth(
+url,
+options={}
+){
 
 
-const socket = io(API);
+const token =
+localStorage.getItem(
+"adminToken"
+);
 
 
-socket.on(
-"booking-updated",
-()=>{
 
-loadBookings();
-loadContracts();
+const response =
+await fetch(
+url,
+{
 
-});
+...options,
+
+headers:{
+
+"Content-Type":
+"application/json",
+
+"Authorization":
+"Bearer " + token
+
+}
+
+}
+
+);
+
+
+
+if(response.status===401){
+
+logout();
+
+return null;
+
+}
+
+
+
+return await response.json();
+
+
+}
+
+
 
 
 
@@ -310,7 +419,7 @@ loadContracts();
 function statusBadge(status){
 
 
-if(status==="paid" || status==="deposit-paid"){
+if(status==="deposit-paid" || status==="paid"){
 
 return `
 <span class="badge paid">
@@ -332,6 +441,7 @@ return `
 }
 
 
+
 return `
 <span class="badge pending">
 🟠 Pending
@@ -343,48 +453,22 @@ return `
 
 
 
-
-
-
 // ================= LOAD BOOKINGS =================
 
 
 async function loadBookings(){
 
 
-try{
-
-
-const res =
-await fetch(
-
-API + "/api/admin/bookings",
-
-{
-
-headers:{
-
-Authorization:
-"Bearer " + localStorage.getItem("adminToken")
-
-}
-
-}
-
-);
-
-
-
 const bookings =
-await res.json();
 
-
-
-console.log(
-"BOOKINGS:",
-bookings
+await fetchWithAuth(
+API+"/api/admin/bookings"
 );
 
+
+
+if(!bookings)
+return;
 
 
 
@@ -394,23 +478,32 @@ bookings.length;
 
 
 document.getElementById("paid").innerText =
+
 bookings.filter(
-b=>b.status==="paid" ||
+b =>
+b.status==="paid" ||
 b.status==="deposit-paid"
+
 ).length;
 
 
 
 document.getElementById("pending").innerText =
+
 bookings.filter(
-b=>b.status==="pending"
+b =>
+b.status==="pending"
+
 ).length;
 
 
 
 document.getElementById("cancelled").innerText =
+
 bookings.filter(
-b=>b.status==="cancelled"
+b =>
+b.status==="cancelled"
+
 ).length;
 
 
@@ -423,7 +516,9 @@ document.getElementById(
 );
 
 
+
 table.innerHTML="";
+
 
 
 
@@ -432,9 +527,7 @@ bookings.forEach(b=>{
 
 table.innerHTML += `
 
-
 <tr>
-
 
 <td>${b.name || "-"}</td>
 
@@ -448,34 +541,9 @@ table.innerHTML += `
 
 <td>${b.timeSlot || "-"}</td>
 
-<td>
-$${b.price || 0}
-</td>
+<td>$${b.price || 0}</td>
 
-
-<td>
-$${b.deposit || 0}
-</td>
-
-
-<td>
-
-${
-b.status==="paid" ||
-b.status==="deposit-paid"
-
-?
-
-"💳 Paid"
-
-:
-
-"❌ Unpaid"
-
-}
-
-</td>
-
+<td>$${b.deposit || 0}</td>
 
 
 <td>
@@ -485,37 +553,41 @@ ${statusBadge(b.status)}
 </td>
 
 
-
-
 <td>
 
 
 <button onclick="changeStatus(${b.id},'paid')">
+
 ✅
+
 </button>
 
 
 <button onclick="changeStatus(${b.id},'pending')">
+
 ⏳
+
 </button>
 
 
 <button onclick="changeStatus(${b.id},'cancelled')">
+
 ❌
+
 </button>
 
 
 <button onclick="deleteBooking(${b.id})">
+
 🗑
+
 </button>
 
 
 </td>
 
 
-
 </tr>
-
 
 `;
 
@@ -523,59 +595,44 @@ ${statusBadge(b.status)}
 });
 
 
-
-}catch(err){
-
-console.log(
-"Booking error",
-err
-);
-
 }
 
 
 
-}
-// ================= UPDATE BOOKING STATUS =================
+
+
+
+
+// ================= CHANGE STATUS =================
+
 
 async function changeStatus(id,status){
 
 
-await fetch(
+await fetchWithAuth(
 
-API + "/api/admin/bookings/" + id,
+API+"/api/admin/bookings/"+id,
 
 {
 
 method:"PUT",
 
-headers:{
-
-"Content-Type":"application/json",
-
-Authorization:
-"Bearer " + localStorage.getItem("adminToken")
-
-},
-
-
 body:JSON.stringify({
 
-status:status
+status
 
 })
-
 
 }
 
 );
+
 
 
 loadBookings();
 
 
 }
-
 
 
 
@@ -589,28 +646,20 @@ loadBookings();
 async function deleteBooking(id){
 
 
-if(!confirm("Delete this booking?")){
-
+if(!confirm(
+"Delete booking?"
+))
 return;
 
-}
 
 
+await fetchWithAuth(
 
-await fetch(
-
-API + "/api/admin/bookings/" + id,
+API+"/api/admin/bookings/"+id,
 
 {
 
-method:"DELETE",
-
-headers:{
-
-Authorization:
-"Bearer " + localStorage.getItem("adminToken")
-
-}
+method:"DELETE"
 
 }
 
@@ -629,50 +678,26 @@ loadBookings();
 
 
 
-
-
-// ================= LOAD CONTRACTS =================
+// ================= CONTRACTS =================
 
 
 async function loadContracts(){
 
 
-try{
-
-
-const res =
-await fetch(
-
-API + "/api/admin/contracts",
-
-{
-
-headers:{
-
-Authorization:
-"Bearer " + localStorage.getItem("adminToken")
-
-}
-
-}
-
-);
-
-
-
 const contracts =
-await res.json();
 
-
-
-console.log(
-"CONTRACTS:",
-contracts
+await fetchWithAuth(
+API+"/api/admin/contracts"
 );
 
 
 
-allContracts = contracts;
+if(!contracts)
+return;
+
+
+
+allContracts=contracts;
 
 
 
@@ -681,19 +706,6 @@ contracts
 );
 
 
-
-}catch(err){
-
-console.log(
-"Contract error",
-err
-);
-
-
-}
-
-
-
 }
 
 
@@ -701,13 +713,7 @@ err
 
 
 
-
-
-
-// ================= RENDER CONTRACTS =================
-
-
-function renderContracts(contracts){
+function renderContracts(data){
 
 
 const table =
@@ -721,21 +727,19 @@ table.innerHTML="";
 
 
 
-if(!contracts.length){
+if(data.length===0){
 
 
-table.innerHTML=`
+table.innerHTML=
 
+`
 <tr>
 
-<td colspan="7">
-
+<td colspan="6">
 No contracts found
-
 </td>
 
 </tr>
-
 `;
 
 return;
@@ -745,7 +749,8 @@ return;
 
 
 
-contracts.forEach(c=>{
+
+data.forEach(c=>{
 
 
 table.innerHTML += `
@@ -754,66 +759,30 @@ table.innerHTML += `
 <tr>
 
 
-<td>
-
-${c.name || "-"}
-
-</td>
+<td>${c.name}</td>
 
 
-<td>
-
-${c.email || "-"}
-
-</td>
+<td>${c.email}</td>
 
 
-
-<td>
-
-${c.contractType || "Service Agreement"}
-
-</td>
+<td>${c.contractType || "-"}</td>
 
 
-
-<td>
-
-${formatDate(c.createdAt)}
-
-</td>
-
+<td>${new Date(c.createdAt).toLocaleDateString()}</td>
 
 
 
 <td>
 
 
-<a href="${API + c.signature}" target="_blank">
+<a href="${API+c.pdfUrl}" target="_blank">
 
-✍️ View Signature
+📄 View PDF
 
 </a>
 
 
 </td>
-
-
-
-
-
-<td>
-
-
-<a href="${API + c.pdfUrl}" target="_blank">
-
-📄 Download PDF
-
-</a>
-
-
-</td>
-
 
 
 
@@ -823,13 +792,12 @@ ${formatDate(c.createdAt)}
 
 <button onclick="deleteContract(${c.id})">
 
-🗑 Delete
+🗑
 
 </button>
 
 
 </td>
-
 
 
 </tr>
@@ -841,69 +809,42 @@ ${formatDate(c.createdAt)}
 });
 
 
-
 }
 
 
 
 
 
-
-
-
-
-// ================= SEARCH CONTRACTS =================
 
 
 function filterContracts(){
 
 
-const search =
+const value =
 
 document.getElementById(
 "searchContracts"
-)
-.value
-.toLowerCase();
-
-
-
-
-const filtered =
-
-allContracts.filter(c=>
-
-
-(c.name || "")
-.toLowerCase()
-.includes(search)
-
-
-
-||
-
-(c.email || "")
-.toLowerCase()
-.includes(search)
-
-
-
-||
-
-(c.contractType || "")
-.toLowerCase()
-.includes(search)
-
-
-
-);
+).value.toLowerCase();
 
 
 
 renderContracts(
-filtered
-);
 
+allContracts.filter(c=>
+
+(c.name||"")
+.toLowerCase()
+.includes(value)
+
+||
+
+(c.email||"")
+.toLowerCase()
+.includes(value)
+
+)
+
+);
 
 
 }
@@ -912,38 +853,25 @@ filtered
 
 
 
-
-
-
-
-// ================= DELETE CONTRACT =================
 
 
 async function deleteContract(id){
 
 
-if(!confirm("Delete this contract?")){
-
+if(!confirm(
+"Delete contract?"
+))
 return;
 
-}
 
 
+await fetchWithAuth(
 
-await fetch(
-
-API + "/api/admin/contracts/" + id,
+API+"/api/admin/contracts/"+id,
 
 {
 
-method:"DELETE",
-
-headers:{
-
-Authorization:
-"Bearer " + localStorage.getItem("adminToken")
-
-}
+method:"DELETE"
 
 }
 
@@ -954,33 +882,14 @@ Authorization:
 loadContracts();
 
 
-
 }
 
 
 
 
-
-
-
-
-
-// ================= DOWNLOAD ALL PDF =================
 
 
 function downloadAllPDFs(){
-
-
-if(!allContracts.length){
-
-alert(
-"No contracts available"
-);
-
-return;
-
-}
-
 
 
 allContracts.forEach(c=>{
@@ -989,24 +898,10 @@ allContracts.forEach(c=>{
 if(c.pdfUrl){
 
 
-const link =
-document.createElement("a");
-
-
-link.href =
-API + c.pdfUrl;
-
-
-link.target="_blank";
-
-
-document.body.appendChild(link);
-
-
-link.click();
-
-
-link.remove();
+window.open(
+API+c.pdfUrl,
+"_blank"
+);
 
 
 }
@@ -1016,36 +911,6 @@ link.remove();
 
 
 }
-
-
-
-
-
-
-
-
-
-// ================= DATE FORMAT =================
-
-
-function formatDate(date){
-
-
-if(!date){
-
-return "-";
-
-}
-
-
-return new Date(date)
-.toLocaleString();
-
-
-}
-
-
-
 
 
 

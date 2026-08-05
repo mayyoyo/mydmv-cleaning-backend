@@ -1,13 +1,10 @@
 node_modules/
-
+database.db
+contracts/
+invoices/
 .env
-
+*.log
 bookings.db
-
 data/
-
-public/invoices/
-
 public/signatures/
-
 public/signed-contracts/

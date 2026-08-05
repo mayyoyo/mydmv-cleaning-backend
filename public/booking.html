@@ -4,17 +4,30 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Book Cleaning Service | My DMV Cleaning Services LLC</title>
+
+<title>
+Book Cleaning Service | My DMV Cleaning Services LLC
+</title>
+
 
 <link rel="stylesheet" href="./css/booking.css">
 
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<link 
+href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css"
+rel="stylesheet">
+
+
+<script 
+src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js">
+</script>
+
 
 </head>
+
 
 
 <body>
@@ -22,27 +35,47 @@
 
 <header class="navbar">
 
+
 <div class="logo">
+
 🧼 My DMV Cleaning Services
+
 </div>
+
 
 
 <div class="hamburger" onclick="toggleMenu()">
+
 ☰
+
 </div>
+
 
 
 <nav class="nav-links" id="navLinks">
 
-<a href="index.html">🏠 Home</a>
 
-<a href="booking.html">📅 Booking</a>
+<a href="index.html">
+🏠 Home
+</a>
 
-<a href="documents.html">📄 Documents</a>
+
+<a href="booking.html">
+📅 Booking
+</a>
+
+
+<a href="documents.html">
+📄 Documents
+</a>
+
 
 </nav>
 
+
 </header>
+
+
 
 
 
@@ -52,117 +85,212 @@
 <section class="booking-card">
 
 
-<h2>
+
+<h1>
 📅 Book Cleaning Service
-</h2>
+</h1>
+
+
 
 
 <div id="calendar"></div>
 
 
+
 <p id="selectedDate">
-No date selected
+
+Please select a date
+
 </p>
 
 
 
-<select id="service" class="input">
+
+
+<select id="service" class="input" onchange="updatePrice()">
+
 
 <option value="">
 Select Service
 </option>
 
+
 <option value="120">
 House Cleaning - $120
 </option>
+
 
 <option value="180">
 Office Cleaning - $180
 </option>
 
+
 <option value="200">
 Deep Cleaning - $200
 </option>
 
+
 <option value="250">
-Move In/Out Cleaning - $250
+Move In / Out Cleaning - $250
 </option>
 
+
 </select>
+
+
+
 
 
 
 <select id="timeSlot" class="input">
 
+
 <option value="">
 Select Time
 </option>
 
+
 <option value="08:00-10:00">
-08:00-10:00
+08:00 - 10:00
 </option>
+
 
 <option value="10:00-12:00">
-10:00-12:00
+10:00 - 12:00
 </option>
+
 
 <option value="12:00-14:00">
-12:00-14:00
+12:00 - 14:00
 </option>
+
 
 <option value="14:00-16:00">
-14:00-16:00
+14:00 - 16:00
 </option>
 
+
 <option value="16:00-18:00">
-16:00-18:00
+16:00 - 18:00
 </option>
+
 
 </select>
 
 
 
-<input id="name"
+
+
+<input 
+id="name"
 class="input"
 placeholder="Full Name">
 
 
-<input id="phone"
+
+<input 
+id="phone"
 class="input"
-placeholder="Phone">
+placeholder="Phone Number">
 
 
-<input id="email"
+
+<input 
+id="email"
 class="input"
 type="email"
 placeholder="Email">
 
 
-<input id="address"
+
+<input 
+id="address"
 class="input"
 placeholder="Address">
+
+
+
+
+
+
+<div class="price-box">
+
+
+<p>
+
+Total:
+<strong id="total">
+$0
+</strong>
+
+</p>
+
+
+
+<p>
+
+Deposit (25%):
+<strong id="deposit">
+$0
+</strong>
+
+</p>
+
+
+
+<p>
+
+Remaining:
+<strong id="remaining">
+$0
+</strong>
+
+</p>
+
+
+
+</div>
+
+
+
+
 
 
 
 <div class="btn-group">
 
 
-<button onclick="payNow()" class="btn pay">
+<button 
+onclick="payNow()"
+class="btn pay">
 
-💳 Pay Now (25% Deposit)
+💳 Pay Now
+<br>
+25% Deposit
 
 </button>
 
 
 
-<button onclick="payLater()" class="btn later">
+
+<button 
+onclick="payLater()"
+class="btn later">
 
 📌 Pay Later
 
 </button>
 
 
+
 </div>
+
+
+
+
+
+<div id="msg"></div>
+
 
 
 </section>
@@ -173,14 +301,18 @@ placeholder="Address">
 
 
 
+
+
 <script>
 
 
-// ===============================
-// RENDER BACKEND CONNECTION
-// ===============================
+// ================= BACKEND API =================
 
 const API =
+window.location.hostname === "localhost"
+?
+"http://localhost:5000"
+:
 "https://dmv-cleaning-backend.onrender.com";
 
 
@@ -189,24 +321,29 @@ let selectedDate = null;
 
 
 
-// ===============================
-// MOBILE MENU
-// ===============================
+// ================= MENU =================
+
 
 function toggleMenu(){
 
+
 document
 .getElementById("navLinks")
-.classList.toggle("active");
+.classList
+.toggle("active");
+
 
 }
 
 
 
 
-// ===============================
-// CALENDAR
-// ===============================
+
+
+
+// ================= CALENDAR =================
+
+
 
 document.addEventListener(
 "DOMContentLoaded",
@@ -214,6 +351,7 @@ document.addEventListener(
 
 
 const calendar =
+
 new FullCalendar.Calendar(
 
 document.getElementById("calendar"),
@@ -232,8 +370,13 @@ selectedDate =
 info.dateStr;
 
 
-document.getElementById("selectedDate")
+
+document.getElementById(
+"selectedDate"
+)
+
 .innerHTML =
+
 "Selected Date: " + selectedDate;
 
 
@@ -241,11 +384,14 @@ document.getElementById("selectedDate")
 await loadBookedSlots(selectedDate);
 
 
-
 }
 
 
-});
+
+}
+
+);
+
 
 
 calendar.render();
@@ -257,9 +403,10 @@ calendar.render();
 
 
 
-// ===============================
-// LOAD BOOKED TIMES
-// ===============================
+
+
+// ================= LOAD BOOKED TIMES =================
+
 
 
 async function loadBookedSlots(date){
@@ -268,48 +415,55 @@ async function loadBookedSlots(date){
 try{
 
 
-const response =
+const res =
+
 await fetch(
+
 `${API}/api/bookings-by-date/${date}`
+
 );
-
-
-
-if(!response.ok){
-
-throw new Error(
-"Backend route failed"
-);
-
-}
 
 
 
 const booked =
-await response.json();
+
+await res.json();
+
+
 
 
 
 const select =
-document.getElementById("timeSlot");
+
+document.getElementById(
+"timeSlot"
+);
+
+
+
 
 
 
 Array.from(select.options)
+
 .forEach(option=>{
 
 
-if(option.value==="")
-return;
+if(option.value){
 
 
 option.disabled=false;
 
-option.textContent=
-option.value;
+
+option.textContent=option.value;
+
+
+}
 
 
 });
+
+
 
 
 
@@ -318,24 +472,35 @@ booked.forEach(slot=>{
 
 
 const option =
+
 Array.from(select.options)
+
 .find(
+
 item=>item.value===slot
+
 );
 
 
 
 if(option){
 
+
 option.disabled=true;
 
+
 option.textContent =
-slot+" (Booked)";
+slot + " ❌ Booked";
+
 
 }
 
 
+
 });
+
+
+
 
 
 }
@@ -343,48 +508,152 @@ slot+" (Booked)";
 catch(error){
 
 
-console.error(
-"Booking slots error:",
+console.log(
+"BOOKING SLOT ERROR:",
 error
 );
 
 
-}
-
 
 }
 
 
 
+}
 
 
 
 
-// ===============================
-// COLLECT DATA
-// ===============================
+
+
+// ================= PRICE =================
+
+
+
+function updatePrice(){
+
+
+const price =
+
+Number(
+
+document.getElementById(
+"service"
+).value
+
+);
+
+
+
+const deposit =
+price * .25;
+
+
+
+const remaining =
+price - deposit;
+
+
+
+
+
+document.getElementById(
+"total"
+).innerText =
+"$"+price;
+
+
+
+document.getElementById(
+"deposit"
+).innerText =
+"$"+deposit;
+
+
+
+document.getElementById(
+"remaining"
+).innerText =
+"$"+remaining;
+
+
+
+}
+
+
+
+
+
+
+// ================= COLLECT DATA =================
+
 
 
 function collectForm(){
 
 
+
 const service =
-document.getElementById("service");
+
+document.getElementById(
+"service"
+);
 
 
 
-const price =
-Number(service.value);
+const time =
+
+document.getElementById(
+"timeSlot"
+);
 
 
 
-if(!selectedDate){
 
-throw new Error(
+
+if(!selectedDate)
+
+throw Error(
 "Please select a date"
 );
 
-}
+
+
+
+
+if(!service.value)
+
+throw Error(
+"Please select service"
+);
+
+
+
+
+
+if(!time.value)
+
+throw Error(
+"Please select time"
+);
+
+
+
+
+
+
+if(
+
+time.options[time.selectedIndex].disabled
+
+)
+
+throw Error(
+"Time already booked"
+);
+
+
+
 
 
 
@@ -392,53 +661,76 @@ const data={
 
 
 name:
+
 document.getElementById("name").value.trim(),
 
 
+
 phone:
+
 document.getElementById("phone").value.trim(),
 
 
+
 email:
+
 document.getElementById("email").value.trim(),
 
 
+
 address:
+
 document.getElementById("address").value.trim(),
 
 
+
 service:
-service.options[service.selectedIndex].text,
+
+service.options[
+service.selectedIndex
+].text,
 
 
-price:price,
+
+price:
+
+Number(service.value),
+
 
 
 date:selectedDate,
 
 
+
 timeSlot:
-document.getElementById("timeSlot").value
+
+time.value
 
 
 };
 
 
 
-if(
-!data.name ||
-!data.email ||
-!data.phone ||
-!data.address ||
-!data.timeSlot ||
-!data.price
-){
 
-throw new Error(
+
+
+
+if(
+
+!data.name ||
+
+!data.phone ||
+
+!data.email ||
+
+!data.address
+
+)
+
+throw Error(
 "Please complete all fields"
 );
 
-}
 
 
 
@@ -452,9 +744,9 @@ return data;
 
 
 
-// ===============================
-// PAY NOW
-// ===============================
+
+// ================= PAY NOW =================
+
 
 
 async function payNow(){
@@ -468,61 +760,60 @@ collectForm();
 
 
 
-data.deposit =
-Math.round(
-data.price * .25 * 100
-)/100;
 
-
-
-data.remaining =
-data.price -
-data.deposit;
+document.getElementById(
+"msg"
+).innerHTML =
+"⏳ Creating payment...";
 
 
 
 
-const response =
+
+const res =
+
 await fetch(
 
 `${API}/api/create-deposit-checkout`,
 
 {
 
-
 method:"POST",
-
 
 headers:{
 
-"Content-Type":"application/json"
+"Content-Type":
+"application/json"
 
 },
 
-
 body:
-JSON.stringify(data)
 
+JSON.stringify(data)
 
 }
 
 );
+
+
+
 
 
 
 const result =
-await response.json();
+await res.json();
 
 
 
-if(!response.ok){
 
-throw new Error(
-result.error ||
-"Payment failed"
+
+if(!res.ok)
+
+throw Error(
+result.error
 );
 
-}
+
 
 
 
@@ -533,18 +824,24 @@ result.url;
 
 }
 
-catch(error){
+catch(err){
 
 
-alert(error.message);
+alert(
+err.message
+);
 
 
-console.error(error);
+console.log(
+"PAY NOW ERROR:",
+err
+);
 
 
 }
 
 
+
 }
 
 
@@ -553,12 +850,13 @@ console.error(error);
 
 
 
-// ===============================
-// PAY LATER
-// ===============================
+
+// ================= PAY LATER =================
+
 
 
 async function payLater(){
+
 
 
 try{
@@ -569,21 +867,20 @@ collectForm();
 
 
 
-data.deposit =
-Math.round(
-data.price * .25 * 100
-)/100;
 
 
-
-data.remaining =
-data.price -
-data.deposit;
+document.getElementById(
+"msg"
+).innerHTML =
+"⏳ Saving booking...";
 
 
 
 
-const response =
+
+
+const res =
+
 await fetch(
 
 `${API}/api/book-pay-later`,
@@ -594,34 +891,38 @@ method:"POST",
 
 headers:{
 
-"Content-Type":"application/json"
+"Content-Type":
+"application/json"
 
 },
 
-
 body:
-JSON.stringify(data)
 
+JSON.stringify(data)
 
 }
 
 );
+
+
+
 
 
 
 const result =
-await response.json();
+await res.json();
 
 
 
-if(!response.ok){
 
-throw new Error(
-result.error ||
-"Booking failed"
+
+if(!res.ok)
+
+throw Error(
+result.error
 );
 
-}
+
 
 
 
@@ -629,19 +930,27 @@ window.location.href =
 "success.html";
 
 
-}
-
-
-catch(error){
-
-
-alert(error.message);
-
-
-console.error(error);
-
 
 }
+
+catch(err){
+
+
+alert(
+err.message
+);
+
+
+
+console.log(
+"PAY LATER ERROR:",
+err
+);
+
+
+
+}
+
 
 
 }

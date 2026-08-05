@@ -8,7 +8,7 @@
 
 <title>My DMV Cleaning Services LLC</title>
 
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="./css/style.css">
 
 </head>
 
@@ -32,7 +32,7 @@ My DMV Cleaning Services LLC
 
 <nav class="nav-links" id="navLinks">
 
-<a href="/">
+<a href="index.html">
 Home
 </a>
 
@@ -47,7 +47,7 @@ Pricing
 </a>
 
 
-<a href="/documents.html">
+<a href="documents.html">
 📄 Documents
 </a>
 
@@ -57,7 +57,7 @@ Contact
 </a>
 
 
-<a href="/booking.html">
+<a href="booking.html">
 Booking
 </a>
 
@@ -84,7 +84,7 @@ Booking
 
 <video autoplay muted loop playsinline class="hero-video">
 
-<source src="/videos/6197066-uhd_3840_2160_25fps.mp4" type="video/mp4">
+<source src="./videos/6197066-uhd_3840_2160_25fps.mp4" type="video/mp4">
 
 </video>
 
@@ -111,7 +111,7 @@ Residential & commercial cleaning across DC, Maryland & Virginia
 <div class="hero-buttons">
 
 
-<a href="/booking.html" class="btn primary">
+<a href="booking.html" class="btn primary">
 🧼 Book Now
 </a>
 
@@ -197,6 +197,7 @@ Starting at $120
 
 
 
+
 <div class="card">
 
 <img src="https://images.unsplash.com/photo-1585421514738-01798e348b17">
@@ -221,6 +222,7 @@ Starting at $200
 
 
 
+
 <div class="card">
 
 <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c">
@@ -240,6 +242,7 @@ Starting at $180
 </div>
 
 </div>
+
 
 
 
@@ -273,13 +276,6 @@ Starting at $250
 
 
 </section>
-
-
-
-
-
-
-
 <!-- ================= PRICING ================= -->
 
 
@@ -372,6 +368,7 @@ $180+
 
 
 
+
 <!-- ================= CONTACT ================= -->
 
 
@@ -455,6 +452,7 @@ Send Message
 
 
 
+
 <!-- ================= FOOTER ================= -->
 
 
@@ -498,6 +496,8 @@ Move In / Out
 
 
 
+
+
 <div>
 
 
@@ -536,6 +536,7 @@ Email Us
 
 
 </div>
+
 
 
 
@@ -586,6 +587,7 @@ Follow Us
 
 
 
+
 <div class="footer-bottom">
 
 © 2026 My DMV Cleaning Services LLC. All rights reserved.
@@ -601,32 +603,26 @@ Follow Us
 
 
 
+
 <footer class="customer-footer">
 
 
-<a href="/legal/privacy.html">
+<a href="legal/privacy.html">
 🔒 Privacy
 </a>
 
 
-<a href="/legal/terms.html">
+<a href="legal/terms.html">
 📜 Terms
 </a>
 
 
-<a href="/legal/refund.html">
+<a href="legal/refund.html">
 💰 Refund
 </a>
 
 
 </footer>
-
-
-
-
-
-
-
 <script>
 
 
@@ -665,6 +661,8 @@ document
 
 
 
+// ================= CONTACT FORM =================
+
 
 async function sendContact(){
 
@@ -687,9 +685,24 @@ return;
 
 
 
+// ================= BACKEND API =================
+
+const API =
+window.location.hostname === "localhost"
+?
+"http://localhost:5000"
+:
+"https://dmv-cleaning-backend.onrender.com";
+
+
+
+
+
 
 const res = await fetch(
-"/api/contact",
+
+`${API}/api/contact`,
+
 {
 
 
@@ -698,6 +711,7 @@ method:"POST",
 
 headers:{
 
+
 "Content-Type":"application/json"
 
 },
@@ -705,20 +719,21 @@ headers:{
 
 body:JSON.stringify({
 
+
 name:
-document.getElementById("name").value,
+document.getElementById("name").value.trim(),
 
 
 email:
-document.getElementById("email").value,
+document.getElementById("email").value.trim(),
 
 
 phone:
-document.getElementById("phone").value,
+document.getElementById("phone").value.trim(),
 
 
 message:
-document.getElementById("message").value
+document.getElementById("message").value.trim()
 
 
 })
@@ -730,12 +745,20 @@ document.getElementById("message").value
 
 
 
+
+
 const data = await res.json();
+
+
+
+
 
 console.log(
 "CONTACT RESPONSE:",
 data
 );
+
+
 
 
 
@@ -750,9 +773,12 @@ alert(
 
 
 
+
+
 document
 .getElementById("name")
 .value="";
+
 
 
 document
@@ -760,9 +786,11 @@ document
 .value="";
 
 
+
 document
 .getElementById("phone")
 .value="";
+
 
 
 document
@@ -770,9 +798,11 @@ document
 .value="";
 
 
+
 document
 .getElementById("agree")
 .checked=false;
+
 
 
 }
@@ -790,16 +820,21 @@ alert(
 
 
 
+
 }
 
 catch(err){
 
 
-console.error(err);
+console.error(
+"CONTACT ERROR:",
+err
+);
+
 
 
 alert(
-"❌ Server not running or request failed"
+"❌ Contact server error"
 );
 
 
@@ -812,6 +847,16 @@ alert(
 
 
 </script>
+
+
+
+<script src="./js/main.js"></script>
+
+
+
+
+
+<script src="./js/main.js"></script>
 
 
 

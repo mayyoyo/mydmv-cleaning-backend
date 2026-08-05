@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backend Test</title>
+</head>
+<body>
+
+<h1>Backend Connection Test</h1>
+
+<button onclick="testBackend()">Test API</button>
+
+<pre id="result"></pre>
+
+<script>
+const API_URL = "https://dmv-cleaning-backend.onrender.com";
+
+function testBackend() {
+
+    fetch(`${API_URL}/api/test`)
+    .then(res => res.json())
+    .then(data => {
+
+        console.log(data);
+
+        document.getElementById("result").textContent =
+            JSON.stringify(data, null, 2);
+
+    })
+    .catch(err => {
+
+        console.error(err);
+
+        document.getElementById("result").textContent =
+            "Error: " + err;
+
+    });
+
+}
+</script>
+
+</body>
+</html>
